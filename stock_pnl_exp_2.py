@@ -217,30 +217,30 @@ def frag(box_num, action_data):
 def frag_plots(symb, data_x, data_y, cp, hold):
     if st.session_state.top_menu == 'All' and st.session_state.menu == 'Top Movements':
         x = math.ceil(len(symb)/2)
-        st.write(x,symb)
         fig, ax = plt.subplots(nrows=x, ncols=2, figsize=(10, 7))
         plot = 0
-        for i in range(x):
-            for j in range(2):
-                print("Plot:",plot)
-                ax[i, j].set_title(symb[plot]+"| CP:"+str(np.round(cp[plot], 2)), fontsize=10)
+        for a in range(x):
+            for b in range(2):
+                print("Plot:", plot, "    ", a, b)
+                ax[a, b].set_title(symb[plot] + "| CP:" + str(np.round(cp[plot], 2)), fontsize=10)
                 labs = [data_x[plot][k] for k in range(0, len(data_x[plot]), 3)]
                 xt = [data_x[plot].index(l) for l in labs]
                 print(labs)
-                ax[i, j].set_xticks(ticks=xt,
-                                    labels= labs,
+                ax[a, b].set_xticks(ticks=xt,
+                                    labels=labs,
                                     rotation=90, fontsize=6)
-                ax[i, j].set_ylim(min(-1, min(data_y[plot]) - 2), max(1, max(data_y[plot]) + 2))
-                ax[i, j].grid()
-                ax[i, j].axhline(color="black")
-                ax[i, j].plot(data_y[plot])
+                ax[a, b].set_ylim(min(-1, min(data_y[plot]) - 2), max(1, max(data_y[plot]) + 2))
+                ax[a, b].grid()
+                ax[a, b].axhline(color="black")
+                ax[a, b].plot(data_y[plot])
                 plot += 1
-                print("After updation:",(i+1)*(j+1),"      ",plot)
-                if plot == (i+1)*(j+1):
-                    break
-                elif plot > len(symb)-1:
-                    ax[i, j+1].set_visible(False)
-                    break
+                print("After updation:", (a + 1) * (b + 1), "      ", plot)
+                if plot == len(symb):
+                    if len(symb) == (a+1)*(b+1):
+                        continue
+                    else:
+                        ax[a, b + 1].set_visible(False)
+                        break
         plt.subplots_adjust(hspace=0.5)
         hold.pyplot(fig, use_container_width=True)
     elif not (st.session_state.menu in ['All', 'Top Movements']) or st.session_state.top_menu != 'All':
