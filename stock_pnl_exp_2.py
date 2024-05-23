@@ -236,7 +236,7 @@ def frag_plots(symb, data_x, data_y, cp, hold):
                 ax[i, j].axhline(color="black")
                 ax[i, j].plot(data_y[plot])
                 plot += 1
-                print("After updation:",i+j+2,"      ",plot)
+                print("After updation:",(i+1)*(j+1),"      ",plot)
                 if plot > len(symb)-1:
                     if (i+1)*(j+1) == len(symb):
                         break
