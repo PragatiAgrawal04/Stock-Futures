@@ -236,7 +236,7 @@ def frag_plots(symb, data_x, data_y, cp, hold):
                 ax[i, j].axhline(color="black")
                 ax[i, j].plot(data_y[plot])
                 plot += 1
-                if plot > len(symb)-1:
+                if plot > len(symb):
                     ax[i, j+1].set_visible(False)
                     break
         plt.subplots_adjust(hspace=0.5)
