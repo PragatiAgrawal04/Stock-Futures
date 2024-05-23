@@ -237,7 +237,7 @@ def frag_plots(symb, data_x, data_y, cp, hold):
                 ax[i, j].plot(data_y[plot])
                 plot += 1
                 if plot > len(symb)-1:
-                    if i+j == len(symb):
+                    if i+j+2 == len(symb):
                         break
                     else:
                         ax[i, j+1].set_visible(False)
