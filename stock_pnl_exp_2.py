@@ -238,7 +238,7 @@ def frag_plots(symb, data_x, data_y, cp, hold):
                 plot += 1
                 print("After updation:",i+j+2,"      ",plot)
                 if plot > len(symb)-1:
-                    if i+j+2 == len(symb):
+                    if (i+1)*(j+1) == len(symb):
                         break
                     else:
                         ax[i, j+1].set_visible(False)
