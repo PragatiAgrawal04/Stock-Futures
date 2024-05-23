@@ -8,6 +8,7 @@ import numpy as np
 import streamlit as st
 import yfinance as yf
 import matplotlib.pyplot as plt
+import math
 
 
 st.set_page_config(
@@ -215,7 +216,7 @@ def frag(box_num, action_data):
 @st.experimental_fragment
 def frag_plots(symb, data_x, data_y, cp, hold):
     if st.session_state.top_menu == 'All' and st.session_state.menu == 'Top Movements':
-        x = (len(symb) // 2) + 1
+        x = math.ceil(len(symb)/2)
         fig, ax = plt.subplots(nrows=x, ncols=2, figsize=(10, 7))
         plot = 0
         for i in range(x):
