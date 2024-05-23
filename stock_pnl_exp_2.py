@@ -217,6 +217,7 @@ def frag(box_num, action_data):
 def frag_plots(symb, data_x, data_y, cp, hold):
     if st.session_state.top_menu == 'All' and st.session_state.menu == 'Top Movements':
         x = math.ceil(len(symb)/2)
+        st.write(x,symb)
         fig, ax = plt.subplots(nrows=x, ncols=2, figsize=(10, 7))
         plot = 0
         for i in range(x):
@@ -226,12 +227,9 @@ def frag_plots(symb, data_x, data_y, cp, hold):
                 labs = [data_x[plot][k] for k in range(0, len(data_x[plot]), 3)]
                 xt = [data_x[plot].index(l) for l in labs]
                 print(labs)
-                # if len(xt) != len(labs):
-                #     xt = np.linspace(0, stop=len(data_x[i+j]), num=int(len(data_x[i+j])/5)+1)
                 ax[i, j].set_xticks(ticks=xt,
                                     labels= labs,
                                     rotation=90, fontsize=6)
-                #ax[i, j].set_xticklabels(data_x[i+j])
                 ax[i, j].set_ylim(min(-1, min(data_y[plot]) - 2), max(1, max(data_y[plot]) + 2))
                 ax[i, j].grid()
                 ax[i, j].axhline(color="black")
