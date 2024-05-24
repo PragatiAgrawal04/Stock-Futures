@@ -23,6 +23,7 @@ yf_stock_symbol_list = list(symbols['stk_symbol_yf'])
 
 
 def download_extract_zip(url, headers):
+    st.write(url)
     response = requests.get(url, headers=headers)
     with zipfile.ZipFile(io.BytesIO(response.content)) as thezip:
         for zipinfo in thezip.infolist():
