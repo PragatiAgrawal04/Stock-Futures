@@ -154,7 +154,6 @@ def chk_pnl_stock(actfutdata, holder):
             yitem = np.array(yitem)
             y.append(yitem)
         x.append([str(i.hour)+":"+str(i.minute) for i in nifty_cash_data['Time']])
-        st.write(list(nifty_cash_data['Close']))
         current_price.append(list(nifty_cash_data['Close'])[-1])
         #print(x)
         #print(y)
@@ -243,7 +242,7 @@ def frag_plots(symb, data_x, data_y, cp, hold):
                     else:
                         ax[a, b + 1].set_visible(False)
                         break
-        plt.subplots_adjust(hspace=0.5)
+        plt.subplots_adjust(hspace=0.75)
         hold.pyplot(fig, use_container_width=True)
     elif not (st.session_state.menu in ['All', 'Top Movements']) or st.session_state.top_menu != 'All':
         #with st.container:
