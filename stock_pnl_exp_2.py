@@ -134,7 +134,7 @@ def chk_pnl_stock(actfutdata, holder):
     for i in symb:
         yfsymb = (yf_stock_symbol_list[stk_symbol_list.index(i)])
         test_date = actfutdata['TIMESTAMP'].tolist()[-1]
-        next_date = test_date+timedelta(1)
+        next_date = datetime.datetime.date.today()
         nifty_cash_data = nifty_cash(next_date,yfsymb)
         yest_closing = actfutdata.loc[(actfutdata['TIMESTAMP'] == test_date) &
                                       (actfutdata['EXPIRY_DT'] == actfutdata['EXPIRY_DT'].unique()[0]) &
