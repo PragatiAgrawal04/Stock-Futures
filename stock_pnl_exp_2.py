@@ -154,7 +154,7 @@ def chk_pnl_stock(actfutdata, holder):
             yitem = np.array(yitem)
             y.append(yitem)
         x.append([str(i.hour)+":"+str(i.minute) for i in nifty_cash_data['Time']])
-        st.write(list(nifty_cash_data['Close'])
+        st.write(list(nifty_cash_data['Close']))
         current_price.append(list(nifty_cash_data['Close'])[-1])
         #print(x)
         #print(y)
