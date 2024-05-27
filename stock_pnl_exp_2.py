@@ -136,9 +136,13 @@ def chk_pnl_stock(actfutdata, holder):
         test_date = date.today()-timedelta(1)
         next_date = test_date+timedelta(1)
         nifty_cash_data = nifty_cash(next_date,yfsymb)
+        st.write(actfutdata.loc[(actfutdata['TIMESTAMP'] == test_date) &
+                                      (actfutdata['EXPIRY_DT'] == actfutdata['EXPIRY_DT'].unique()[0]) &
+                                      (actfutdata['SYMBOL'] == i)]['CLOSE'])
         yest_closing = actfutdata.loc[(actfutdata['TIMESTAMP'] == test_date) &
                                       (actfutdata['EXPIRY_DT'] == actfutdata['EXPIRY_DT'].unique()[0]) &
                                       (actfutdata['SYMBOL'] == i)]['CLOSE'].item()
+        
         action = actfutdata.loc[(actfutdata['TIMESTAMP'] == test_date) &
                                 (actfutdata['EXPIRY_DT'] == actfutdata['EXPIRY_DT'].unique()[0]) &
                                 (actfutdata['SYMBOL'] == i)]['Action'].item()
