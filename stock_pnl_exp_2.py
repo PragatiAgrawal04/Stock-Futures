@@ -317,7 +317,7 @@ def movement_plot(hold, data):
     symb = data['Symbol'].unique().tolist()
     data_y = data['Walk']
     data_x = [str(i.hour) + ":" + str(i.minute) for i in data['Time']]
-    plt.title(symb[0] + "|% Movement")
+    plt.title(symb[0] + "|Cumulative Movement")
     plt.xticks(rotation=90, fontsize=6)
     plt.yticks(fontsize=6)
     plt.ylim(min(-1, min(data_y) - 0.02*max(data_y)), max(1, max(data_y) + 0.02*max(data_y)))
