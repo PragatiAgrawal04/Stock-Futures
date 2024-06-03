@@ -9,13 +9,17 @@ import streamlit as st
 import yfinance as yf
 import matplotlib.pyplot as plt
 import math
+import time
 
 
 st.set_page_config(
     layout="wide",  # Use the entire screen width
     initial_sidebar_state="collapsed",  # Initially hide the sidebar
 )
-
+holidays = [date(2024,1,22),date(2024,1,26),date(2024,3,8),date(2024,3,25),
+                date(2024,3,29),date(2024,4,11),date(2024,4,17),date(2024,5,1),
+                date(2024,5,20),date(2024,6,17),date(2024,7,17),date(2024,8,15),
+                date(2024,9,2),date(2024,11,1),date(2024,11,15),date(2024,12,25)]
 option = 'FUTSTK'
 symbols = pd.read_csv('symbols.csv')
 stk_symbol_list = list(symbols['stock_symbols'])
@@ -50,11 +54,9 @@ def read_bhavcopy_data(data,o):
 
 
 def extract_bhavcopy(opt):
-    holidays = [date(2024,1,22),date(2024,1,26),date(2024,3,8),date(2024,3,25),
-                date(2024,3,29),date(2024,4,11),date(2024,4,17),date(2024,5,1),
-                date(2024,5,20),date(2024,6,17),date(2024,7,17),date(2024,8,15),
-                date(2024,9,2),date(2024,11,1),date(2024,11,15),date(2024,12,25)]
     entire_data = pd.DataFrame()
+    time_now = time.time()
+    
     date_today = date.today()
     dates = [date_today-timedelta(i) for i in range(1, 6)]
 
@@ -62,6 +64,7 @@ def extract_bhavcopy(opt):
         if (i.strftime("%A") in ['Saturday', 'Sunday']) or (i in holidays):
             continue
         else:
+
             dd = i.day
             mm = i.strftime("%B")[:3].upper()
             yy = str(i.year)
@@ -73,6 +76,11 @@ def extract_bhavcopy(opt):
                     df = read_bhavcopy_data(df, opt)
                 entire_data = pd.concat([entire_data, df], axis=0, ignore_index=True)
     entire_data = entire_data.sort_values(by=['EXPIRY_DT', 'TIMESTAMP'], ignore_index=True)
+    final_data = pd.DataFrame()
+    for ind, data in entire_data.iterrows():
+        if abs((data['TIMESTAMP'] - data['EXPIRY_DT']).days) > 2:
+            final_data = pd.concat([final_data, data], axis=1)
+    entire_data = final_data.transpose().reset_index(drop = True)
     return entire_data
 
 
@@ -128,33 +136,37 @@ def nifty_cash(date, symbol):
 
 def chk_pnl_stock(actfutdata, holder):
     symb = actfutdata['SYMBOL'].unique().tolist()
-    x=[]
-    y=[]
-    current_price=[]
-    for i in symb:
-        yfsymb = (yf_stock_symbol_list[stk_symbol_list.index(i)])
-        test_date = actfutdata['TIMESTAMP'].tolist()[-1]
-        next_date = date.today()
-        nifty_cash_data = nifty_cash(next_date,yfsymb)
-        yest_closing = actfutdata.loc[(actfutdata['TIMESTAMP'] == test_date) &
-                                      (actfutdata['EXPIRY_DT'] == actfutdata['EXPIRY_DT'].unique()[0]) &
-                                      (actfutdata['SYMBOL'] == i)]['CLOSE'].item()
-        
-        action = actfutdata.loc[(actfutdata['TIMESTAMP'] == test_date) &
-                                (actfutdata['EXPIRY_DT'] == actfutdata['EXPIRY_DT'].unique()[0]) &
-                                (actfutdata['SYMBOL'] == i)]['Action'].item()
-        if action == 'Buy':
-            nifty_cash_data['BUY PnL'] = nifty_cash_data['Close']-yest_closing
-            yitem = list(nifty_cash_data['BUY PnL'])
-            yitem = np.array(yitem)
-            y.append(yitem)
-        elif action == 'Sell':
-            nifty_cash_data['SELL PnL'] = yest_closing-nifty_cash_data['Close']
-            yitem = list(nifty_cash_data['SELL PnL'])
-            yitem = np.array(yitem)
-            y.append(yitem)
-        x.append([str(i.hour)+":"+str(i.minute) for i in nifty_cash_data['Time']])
-        current_price.append(list(nifty_cash_data['Close'])[-1])
+    x = []
+    y = []
+    current_price = []
+    chk_date = date.today()
+    if (chk_date.strftime("%A") in ['Saturday', 'Sunday']) or (chk_date in holidays):
+        st.write("MARKET IS CLOSED")
+    else:
+        for i in symb:
+            yfsymb = (yf_stock_symbol_list[stk_symbol_list.index(i)])
+            test_date = date.today()-timedelta(1)
+            while (test_date.strftime("%A") in ['Saturday', 'Sunday']) or (test_date in holidays):
+                test_date = test_date - timedelta(1)
+            nifty_cash_data = nifty_cash(chk_date, yfsymb)
+            yest_closing = actfutdata.loc[(actfutdata['TIMESTAMP'] == test_date) &
+                                          (actfutdata['EXPIRY_DT'] == actfutdata['EXPIRY_DT'].unique()[0]) &
+                                          (actfutdata['SYMBOL'] == i)]['CLOSE'].item()
+            action = actfutdata.loc[(actfutdata['TIMESTAMP'] == test_date) &
+                                    (actfutdata['EXPIRY_DT'] == actfutdata['EXPIRY_DT'].unique()[0]) &
+                                    (actfutdata['SYMBOL'] == i)]['Action'].item()
+            if action == 'Buy':
+                nifty_cash_data['BUY PnL'] = nifty_cash_data['Close']-yest_closing
+                yitem = list(nifty_cash_data['BUY PnL'])
+                yitem = np.array(yitem)
+                y.append(yitem)
+            elif action == 'Sell':
+                nifty_cash_data['SELL PnL'] = yest_closing-nifty_cash_data['Close']
+                yitem = list(nifty_cash_data['SELL PnL'])
+                yitem = np.array(yitem)
+                y.append(yitem)
+            x.append([str(i.hour)+":"+str(i.minute) for i in nifty_cash_data['Time']])
+            current_price.append(list(nifty_cash_data['Close'])[-1])
         #print(x)
         #print(y)
     frag_plots(symb, x, y, current_price, holder)
@@ -218,19 +230,27 @@ def frag(box_num, action_data):
 def frag_plots(symb, data_x, data_y, cp, hold):
     if st.session_state.top_menu == 'All' and st.session_state.menu == 'Top Movements':
         x = math.ceil(len(symb)/2)
-        fig, ax = plt.subplots(nrows=x, ncols=2, figsize=(10, 7))
+        fig, ax = plt.subplots(nrows=x, ncols=2, figsize=(8,6))
         plot = 0
         for a in range(x):
             for b in range(2):
                 print("Plot:", plot, "    ", a, b)
-                ax[a, b].set_title(symb[plot] + "| CP:" + str(np.round(cp[plot], 2)), fontsize=10)
+                ax[a, b].set_title(symb[plot] + "| CP:" + str(np.round(cp[plot], 2)), fontsize=6)
                 labs = [data_x[plot][k] for k in range(0, len(data_x[plot]), 3)]
                 xt = [data_x[plot].index(l) for l in labs]
                 print(labs)
                 ax[a, b].set_xticks(ticks=xt,
                                     labels=labs,
-                                    rotation=90, fontsize=6)
+                                    rotation=90, fontsize=4)
+                num=10
+                if int(min(data_y[plot]))-int(max(data_y[plot])) < 10:
+                    num=5
+                yt = np.round(np.linspace(int(min(data_y[plot])), int(max(data_y[plot])), num),2)
+                print(yt)
+                #yt = [np.linspace(-5,5,10)]
+                ax[a, b].set_yticks(ticks=yt, labels=yt, fontsize=4)
                 ax[a, b].set_ylim(min(-1, min(data_y[plot]) - 2), max(1, max(data_y[plot]) + 2))
+                ax[a, b].set_ylabel("Profit", fontsize=6)
                 ax[a, b].grid()
                 ax[a, b].axhline(color="black")
                 ax[a, b].plot(data_y[plot])
@@ -242,15 +262,16 @@ def frag_plots(symb, data_x, data_y, cp, hold):
                     else:
                         ax[a, b + 1].set_visible(False)
                         break
-        plt.subplots_adjust(hspace=0.75)
-        hold.pyplot(fig, use_container_width=True)
+        plt.subplots_adjust(hspace=0.7)
+        hold.pyplot(fig, use_container_width=False)
     elif not (st.session_state.menu in ['All', 'Top Movements']) or st.session_state.top_menu != 'All':
         #with st.container:
         print(cp[0])
         #st.write('<style>.center {justify-content: center;align-items: center}</style><div class="center">Chart1', unsafe_allow_html=True)
         fig, ax = plt.subplots(figsize=(10, 2))
         plt.title(symb[0]+"| CP:"+str(np.round(cp[0], 2)))
-        plt.xticks(rotation=90)
+        plt.xticks(rotation=90, fontsize=6)
+        plt.yticks(fontsize=6)
         plt.ylim(min(-1, min(data_y[0])-2), max(1, max(data_y[0])+2))
         plt.grid()
         plt.axhline(color="black")
@@ -265,10 +286,7 @@ if "top_menu" not in st.session_state:
     st.session_state.top_menu = 'All'
 
 all_stocks_data = extract_bhavcopy(option)
-aa = extract_bhavcopy('FUTIDX')
-#aa = aa.loc[(aa['SYMBOL'] == 'NIFTY') & (aa['EXPIRY_DT'] == list(aa['EXPIRY_DT'].unique())[0])]
-#st.dataframe(aa)
-all_stocks_data = pd.concat([all_stocks_data, aa], axis=0).reset_index(drop=True)
+#all_stocks_data = pd.concat([all_stocks_data, aa], axis=0).reset_index(drop=True)
 action_data_all_stk = pd.DataFrame()
 for i in stk_symbol_list:
     one_stock_data = all_stocks_data.loc[(all_stocks_data['SYMBOL'] == i) & (
