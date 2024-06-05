@@ -181,7 +181,7 @@ def chk_pnl_stock(actfutdata, holder):
         diff = curr_open - prev_close
         walk = movement[ind-1] + (diff)
         walk_list.append(walk)
-        movement.append(walk)
+        movement.append(diff)
     nifty_cash_all_data['Movement'] = movement
     nifty_cash_all_data['Walk'] = walk_list
         # print(x)
@@ -206,6 +206,7 @@ def frag(box_num, action_data):
     data_action = st.empty()
     plot_placeholder = st.empty()
     move_plot_placeholder = st.empty()
+    movement_data = st.empty()
     if st.session_state.menu == 'All':
         action_data = action_data.loc[
             action_data['TIMESTAMP'] == list(action_data['TIMESTAMP'].unique())[-1]].reset_index(drop=True)
@@ -260,7 +261,7 @@ def frag(box_num, action_data):
 def frag_plots(symb, data_x, data_y, cp, hold):
     if st.session_state.top_menu == 'All' and st.session_state.menu == 'Top Movements':
         x = math.ceil(len(symb) / 2)
-        fig, ax = plt.subplots(nrows=x, ncols=2, figsize=(8, 6))
+        fig, ax = plt.subplots(nrows=x, ncols=2, figsize=(10, 10))
         plot = 0
         for a in range(x):
             for b in range(2):
@@ -317,7 +318,7 @@ def movement_plot(hold, data):
     symb = data['Symbol'].unique().tolist()
     data_y = data['Walk']
     data_x = [str(i.hour) + ":" + str(i.minute) for i in data['Time']]
-    plt.title(symb[0] + "|Cumulative Movement")
+    plt.title(symb[0] + "| Movement")
     plt.xticks(rotation=90, fontsize=6)
     plt.yticks(fontsize=6)
     plt.ylim(min(-1, min(data_y) - 0.02*max(data_y)), max(1, max(data_y) + 0.02*max(data_y)))
