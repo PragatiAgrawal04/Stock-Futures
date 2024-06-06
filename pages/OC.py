@@ -11,6 +11,7 @@ import csv
 
 st.set_page_config(page_title = "OPTSTK", layout="wide", initial_sidebar_state="collapsed")
 st.sidebar.header("OC")
+st.sidebar.write("Categorization of Call and Put options into 4 tabs: LB, SB, SC, LL")
 exchange = "NSE"
 ATM = 0
 symbols = pd.read_csv('symbols.csv')
