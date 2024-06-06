@@ -103,7 +103,7 @@ def get_dataframe(ticker, exp_date_selected):
 
     url = f"https://www.nseindia.com/api/option-chain-equities?symbol={ticker}"
     option_chain_data = requests.get(url, headers=headers, cookies=cookies)
-
+    st.write(url)
     data = option_chain_data.json()["records"]["data"]
     ocdata = []
 
