@@ -173,7 +173,6 @@ def get_dataframe(ticker, exp_date_selected):
     subset_pe = fd_pe[(fd_pe.instrumentType == "PE") & (fd_pe.expiryDate == adjusted_expiry_pe)].reset_index(drop=True)
     ind_atm_pe = subset_pe[(subset_pe.strikePrice == atm_price)].index.tolist()[0]
     subset_pe = subset_pe.loc[ind_atm_pe-10:ind_atm_pe+10, ].reset_index(drop=True)
-    print("CPE: ",atm_ce, atm_pe)
     output_pe = pd.concat([output_pe, subset_pe]).reset_index(drop=True)
     output_pe = categorize(output_pe)
 
