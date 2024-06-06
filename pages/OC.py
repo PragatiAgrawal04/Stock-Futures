@@ -8,7 +8,7 @@ import datetime
 import streamlit as st
 import csv
 
-st.set_page_config(layout="wide", initial_sidebar_state="collapsed")
+st.set_page_config(page_title = "OPTSTK", layout="wide", initial_sidebar_state="collapsed")
 st.sidebar.header("OC")
 exchange = "NSE"
 ATM = 0
