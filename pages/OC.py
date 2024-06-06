@@ -74,15 +74,13 @@ def current_market_price(ticker):
     
 
 def fifty_two_week_high_low(ticker, exchange):
-    url = f"https://www.google.com/finance/quote/{ticker}:{exchange}"
-
-    response = requests.get(url)
-    soup = BeautifulSoup(response.text, 'html.parser')
-    class1 = "P6K39c"
-
-    price = soup.find_all(class_=class1)[2].text
-    low_52_week = float(price.split("-")[0].strip()[1:].replace(",", ""))
-    high_52_week = float(price.split("-")[1].strip()[1:].replace(",", ""))
+    global yf_stock_symbol_list
+    global stk_symbol_list
+    yfsymb = (yf_stock_symbol_list[stk_symbol_list.index(ticker)])
+    chk_date = datetime.date.today()
+    data = yf.download(yfsymb, period="1y", auto_adjust=True, prepost=True, threads=True)
+    low_52_week = float(data['High'].max())
+    high_52_week = float(data['Low'].min())
     return low_52_week, high_52_week
 
 
