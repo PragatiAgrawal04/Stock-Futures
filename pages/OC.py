@@ -6,6 +6,7 @@ import xlwings as xw
 from bs4 import BeautifulSoup
 import datetime
 import streamlit as st
+import yfinance as yf
 import csv
 
 st.set_page_config(page_title = "OPTSTK", layout="wide", initial_sidebar_state="collapsed")
