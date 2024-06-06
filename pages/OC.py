@@ -134,17 +134,7 @@ def get_dataframe(ticker, exp_date_selected):
     atm_price = current_market_price(ticker)
     diffdata = pd.DataFrame({"Strike": strike, "Difference": [abs(x - atm_price) for x in strike]})
     atm_price = diffdata.loc[diffdata['Difference'] == diffdata['Difference'].min()]['Strike'].head(1).item()
-
-    five_percent_cmp_ce = atm_price - 0.05 * atm_price
-    five_percent_cmp_pe = atm_price + 0.05 * atm_price
-
-    # access dataframe for atm price
-    diffdata_ce = pd.DataFrame({"Strike": strike, "Difference": [abs(x - five_percent_cmp_ce) for x in strike]})
-    atm_ce = diffdata_ce.loc[diffdata_ce['Difference'] == diffdata_ce['Difference'].min()]['Strike'].head(1).item()
-
-    diffdata_pe = pd.DataFrame({"Strike": strike, "Difference": [abs(x - five_percent_cmp_pe) for x in strike]})
-    atm_pe = diffdata_pe.loc[diffdata_pe['Difference'] == diffdata_pe['Difference'].min()]['Strike'].head(1).item()
-
+    
     output_ce = pd.DataFrame()
     output_pe = pd.DataFrame()
 
@@ -174,17 +164,15 @@ def get_dataframe(ticker, exp_date_selected):
 
     # (subset_ce (CE))
     subset_ce = fd[(fd.instrumentType == "CE") & (fd.expiryDate == adjusted_expiry)].reset_index(drop=True)
-    ind_atm_ce = subset_ce[(subset_ce.strikePrice == atm_ce)].index.tolist()[0]
-    ind_atm_pe = subset_ce[(subset_ce.strikePrice == atm_pe)].index.tolist()[0]
-    subset_ce = subset_ce.loc[ind_atm_ce:ind_atm_pe,].reset_index(drop=True)
+    ind_atm_ce = subset_ce[(subset_ce.strikePrice == atm_price)].index.tolist()[0]
+    subset_ce = subset_ce.loc[ind_atm_ce-10:ind_atm_ce+10,].reset_index(drop=True)
     output_ce = pd.concat([output_ce, subset_ce]).reset_index(drop=True)
     output_ce = categorize(output_ce)
 
     # (subset_pe (PE))
     subset_pe = fd_pe[(fd_pe.instrumentType == "PE") & (fd_pe.expiryDate == adjusted_expiry_pe)].reset_index(drop=True)
-    ind_atm_ce = subset_pe[(subset_pe.strikePrice == atm_ce)].index.tolist()[0]
-    ind_atm_pe = subset_pe[(subset_pe.strikePrice == atm_pe)].index.tolist()[0]
-    subset_pe = subset_pe.loc[ind_atm_ce:ind_atm_pe, ].reset_index(drop=True)
+    ind_atm_pe = subset_pe[(subset_pe.strikePrice == atm_price)].index.tolist()[0]
+    subset_pe = subset_pe.loc[ind_atm_pe-10:ind_atm_pe+10, ].reset_index(drop=True)
     print("CPE: ",atm_ce, atm_pe)
     output_pe = pd.concat([output_pe, subset_pe]).reset_index(drop=True)
     output_pe = categorize(output_pe)
