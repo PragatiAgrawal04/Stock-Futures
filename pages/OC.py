@@ -316,9 +316,9 @@ if len(hist_df) > 0:
     last_rec = hist_df.tail(1)
     print(last_rec)
     frag_table(1, last_rec['table1'].item(), last_rec['exp1'].item())
-    #frag_table(2, last_rec['table2'].item(), last_rec['exp2'].item())
-    #frag_table(3, last_rec['table3'].item(), last_rec['exp3'].item())
+    frag_table(2, last_rec['table2'].item(), last_rec['exp2'].item())
+    frag_table(3, last_rec['table3'].item(), last_rec['exp3'].item())
 else:
     frag_table(1, 'RELIANCE')
-    #frag_table(2, 'VEDL')
-    #frag_table(3, 'INFY')
+    frag_table(2, 'VEDL')
+    frag_table(3, 'INFY')
