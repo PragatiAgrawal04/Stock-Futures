@@ -121,7 +121,7 @@ def get_dataframe(ticker, exp_date_selected):
     strike = df.strikePrice.unique().tolist()
     strike_size = int(strike[int(len(strike) / 2) + 1]) - int(strike[int(len(strike) / 2)])
 
-    atm_price = current_market_price(ticker, exchange)
+    atm_price = current_market_price(ticker)
     diffdata = pd.DataFrame({"Strike": strike, "Difference": [abs(x - atm_price) for x in strike]})
     atm_price = diffdata.loc[diffdata['Difference'] == diffdata['Difference'].min()]['Strike'].head(1).item()
 
