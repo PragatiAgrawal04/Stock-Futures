@@ -79,8 +79,8 @@ def fifty_two_week_high_low(ticker, exchange):
     yfsymb = (yf_stock_symbol_list[stk_symbol_list.index(ticker)])
     chk_date = datetime.date.today()
     data = yf.download(yfsymb, period="1y", auto_adjust=True, prepost=True, threads=True)
-    low_52_week = float(data['High'].max())
-    high_52_week = float(data['Low'].min())
+    low_52_week = float(data['Low'].min())
+    high_52_week = float(data['High'].max())
     return low_52_week, high_52_week
 
 
