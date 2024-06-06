@@ -263,7 +263,7 @@ def frag(box_num, action_data):
 def frag_plots(symb, data_x, data_y, cp, hold):
     if st.session_state.top_menu == 'All' and st.session_state.menu == 'Top Movements':
         x = math.ceil(len(symb) / 2)
-        fig, ax = plt.subplots(nrows=x, ncols=2, figsize=(10, 20))
+        fig, ax = plt.subplots(nrows=x, ncols=2, figsize=(10, 10))
         plot = 0
         for a in range(x):
             for b in range(2):
