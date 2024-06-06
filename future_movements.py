@@ -263,7 +263,7 @@ def frag(box_num, action_data):
 def frag_plots(symb, data_x, data_y, cp, hold):
     if st.session_state.top_menu == 'All' and st.session_state.menu == 'Top Movements':
         x = math.ceil(len(symb) / 2)
-        fig, ax = plt.subplots(nrows=x, ncols=2, figsize=(10, 10))
+        fig, ax = plt.subplots(nrows=x, ncols=2, figsize=(8, 6))
         plot = 0
         for a in range(x):
             for b in range(2):
@@ -285,7 +285,7 @@ def frag_plots(symb, data_x, data_y, cp, hold):
                 ax[a, b].set_ylim(min(-1, min(data_y[plot]) - 2), max(1, max(data_y[plot]) + 2))
                 ax[a, b].set_ylabel("Profit", fontsize=6)
                 ax[a, b].grid()
-                ax[a, b].axhline(color="black")
+                ax[a, b].axhline(color="blue")
                 ax[a, b].plot(data_y[plot])
                 plot += 1
                 print("After updation:", (a + 1) * (b + 1), "      ", plot)
@@ -295,7 +295,7 @@ def frag_plots(symb, data_x, data_y, cp, hold):
                     else:
                         ax[a, b + 1].set_visible(False)
                         break
-        plt.subplots_adjust(hspace=0.7)
+        plt.subplots_adjust(hspace=0.9)
         hold.pyplot(fig, use_container_width=False)
     elif not (st.session_state.menu in ['All', 'Top Movements']) or st.session_state.top_menu != 'All':
         # with st.container:
