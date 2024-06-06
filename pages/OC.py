@@ -262,7 +262,7 @@ def frag_table(table_number, selected_option='UBL', exp_option=EXP_OPTION):
             output_ce, output_pe, atm = get_dataframe(ticker, exp_option)
             ATM = atm
             ########################################## Stock LTP and Matrix #######################################
-            stock_ltp = current_market_price(ticker, exchange)
+            stock_ltp = current_market_price(ticker)
             low_52_week, high_52_week = fifty_two_week_high_low(ticker, exchange)
     d1, d2, d3 = st.columns(3)
     with d1:
