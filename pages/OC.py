@@ -56,7 +56,7 @@ def current_market_price(ticker):
     global yf_stock_symbol_list
     global stk_symbol_list
     yfsymb = (yf_stock_symbol_list[stk_symbol_list.index(ticker)])
-    chk_date = date.today()
+    chk_date = datetime.date.today()
     nifty_cash_data = nifty_cash(chk_date, yfsymb)
     current_price = list(nifty_cash_data['Close'])[-1]
     return current_price
