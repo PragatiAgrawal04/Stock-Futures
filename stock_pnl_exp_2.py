@@ -12,9 +12,11 @@ import math
 import time
 
 st.set_page_config(
+    page_title="Future Movements",
     layout="wide",  # Use the entire screen width
     initial_sidebar_state="collapsed",  # Initially hide the sidebar
 )
+st.sidebar.header("Future Movements")
 holidays = [date(2024, 1, 22), date(2024, 1, 26), date(2024, 3, 8), date(2024, 3, 25),
             date(2024, 3, 29), date(2024, 4, 11), date(2024, 4, 17), date(2024, 5, 1),
             date(2024, 5, 20), date(2024, 6, 17), date(2024, 7, 17), date(2024, 8, 15),
