@@ -100,10 +100,11 @@ def get_dataframe(ticker, exp_date_selected):
     main_url = "https://www.nseindia.com/"
     response = requests.get(main_url, headers=headers)
     cookies = response.cookies
-
-    url = f"https://www.nseindia.com/api/option-chain-equities?symbol={ticker}"
+    if ticker == 'NIFTY':
+        url = f"https://www.nseindia.com/api/option-chain-indices?symbol={ticker}"
+    else:
+        url = f"https://www.nseindia.com/api/option-chain-equities?symbol={ticker}"
     option_chain_data = requests.get(url, headers=headers, cookies=cookies)
-    st.write(url)
     data = option_chain_data.json()["records"]["data"]
     ocdata = []
 
