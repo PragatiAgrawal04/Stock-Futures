@@ -5,7 +5,6 @@ import time
 import xlwings as xw
 from bs4 import BeautifulSoup
 import datetime
-import yfinance as yf
 import streamlit as st
 import csv
 
@@ -60,7 +59,7 @@ def current_market_price(ticker, exchange):
         class1 = "YMlKec fxKbKc"
 
         price = float(soup.find(class_=class1).text.strip()[1:].replace(",", ""))
-    return price
+        return price
 
 
 def fifty_two_week_high_low(ticker, exchange):
@@ -101,8 +100,10 @@ def get_dataframe(ticker, exp_date_selected):
     main_url = "https://www.nseindia.com/"
     response = requests.get(main_url, headers=headers)
     cookies = response.cookies
+
     url = f"https://www.nseindia.com/api/option-chain-equities?symbol={ticker}"
     option_chain_data = requests.get(url, headers=headers, cookies=cookies)
+
     data = option_chain_data.json()["records"]["data"]
     ocdata = []
 
@@ -315,9 +316,9 @@ if len(hist_df) > 0:
     last_rec = hist_df.tail(1)
     print(last_rec)
     frag_table(1, last_rec['table1'].item(), last_rec['exp1'].item())
-    frag_table(2, last_rec['table2'].item(), last_rec['exp2'].item())
-    frag_table(3, last_rec['table3'].item(), last_rec['exp3'].item())
+    #frag_table(2, last_rec['table2'].item(), last_rec['exp2'].item())
+    #frag_table(3, last_rec['table3'].item(), last_rec['exp3'].item())
 else:
     frag_table(1, 'RELIANCE')
-    frag_table(2, 'VEDL')
-    frag_table(3, 'INFY')
+    #frag_table(2, 'VEDL')
+    #frag_table(3, 'INFY')
