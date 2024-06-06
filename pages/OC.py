@@ -54,7 +54,7 @@ EXP_OPTION = DATE_LIST[0]
 
 
 def nifty_cash(date, symbol):
-    data = yf.download(symbol,start=date,end=date+timedelta(1),interval='1m')
+    data = yf.download(symbol,start=date,end=date+datetime.timedelta(1),interval='1m')
     data = pd.DataFrame(data)
     #data['DateTime']=data.index
     data['Date'] = [i.date() for i in data.index]
