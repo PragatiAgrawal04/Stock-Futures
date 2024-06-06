@@ -285,7 +285,7 @@ def frag_plots(symb, data_x, data_y, cp, hold):
                 ax[a, b].set_ylim(min(-1, min(data_y[plot]) - 2), max(1, max(data_y[plot]) + 2))
                 ax[a, b].set_ylabel("Profit", fontsize=6)
                 ax[a, b].grid()
-                ax[a, b].axhline(color="red", linewidth=0.5)
+                ax[a, b].axhline(color="red", linewidth=0.8)
                 ax[a, b].plot(data_y[plot], linewidth = 0.5)
                 plot += 1
                 print("After updation:", (a + 1) * (b + 1), "      ", plot)
