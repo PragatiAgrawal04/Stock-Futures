@@ -51,7 +51,10 @@ EXP_OPTION = DATE_LIST[0]
 
 
 def current_market_price(ticker, exchange):
-    url = f"https://www.google.com/finance/quote/{ticker}:{exchange}"
+    if ticker == "NIFTY":
+        url = f"https://www.google.com/finance/quote/NIFTY:INDEXNSE"
+    else:
+        url = f"https://www.google.com/finance/quote/{ticker}:{exchange}"
 
     for _ in range(1000000):
         response = requests.get(url)
@@ -100,8 +103,10 @@ def get_dataframe(ticker, exp_date_selected):
     main_url = "https://www.nseindia.com/"
     response = requests.get(main_url, headers=headers)
     cookies = response.cookies
-
-    url = f"https://www.nseindia.com/api/option-chain-equities?symbol={ticker}"
+    if ticker == "NIFTY":
+        url = f"https://www.nseindia.com/api/option-chain-indices?symbol={ticker}"
+    else:
+        url = f"https://www.nseindia.com/api/option-chain-equities?symbol={ticker}"
     option_chain_data = requests.get(url, headers=headers, cookies=cookies)
 
     data = option_chain_data.json()["records"]["data"]
@@ -220,7 +225,7 @@ def frag_table(table_number, selected_option='UBL', exp_option=EXP_OPTION):
     global ATM
     global OPT
     shares = pd.read_csv("FNO Stocks - All FO Stocks List, Technical Analysis Scanner.csv")
-    share_list = list(shares["Symbol"])
+    share_list = list(shares["Symbol"])+["NIFTY"]
     share_list.sort()
     selected_option = selected_option.strip()
     share_list.remove(selected_option)
