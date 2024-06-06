@@ -52,17 +52,15 @@ EXP_OPTION = DATE_LIST[0]
 
 
 def current_market_price(ticker, exchange):
-    data = yf.Ticker(ticker).history(period="1d", interval="1m")
-    return data["Close"].iloc[-1]
-    # url = f"https://www.google.com/finance/quote/{ticker}:{exchange}"
+    url = f"https://www.google.com/finance/quote/{ticker}:{exchange}"
 
-    # for _ in range(1000000):
-    #     response = requests.get(url)
-    #     soup = BeautifulSoup(response.text, 'html.parser')
-    #     class1 = "YMlKec fxKbKc"
+    for _ in range(1000000):
+        response = requests.get(url)
+        soup = BeautifulSoup(response.text, 'html.parser')
+        class1 = "YMlKec fxKbKc"
 
-    #     price = float(soup.find(class_=class1).text.strip()[1:].replace(",", ""))
-    #    return price
+        price = float(soup.find(class_=class1).text.strip()[1:].replace(",", ""))
+       return price
 
 
 def fifty_two_week_high_low(ticker, exchange):
