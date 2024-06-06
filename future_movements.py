@@ -285,8 +285,8 @@ def frag_plots(symb, data_x, data_y, cp, hold):
                 ax[a, b].set_ylim(min(-1, min(data_y[plot]) - 2), max(1, max(data_y[plot]) + 2))
                 ax[a, b].set_ylabel("Profit", fontsize=6)
                 ax[a, b].grid()
-                ax[a, b].axhline(color="blue")
-                ax[a, b].plot(data_y[plot])
+                ax[a, b].axhline(color="red", linewidth=0.5)
+                ax[a, b].plot(data_y[plot], linewidth = 0.5)
                 plot += 1
                 print("After updation:", (a + 1) * (b + 1), "      ", plot)
                 if plot == len(symb):
@@ -295,7 +295,7 @@ def frag_plots(symb, data_x, data_y, cp, hold):
                     else:
                         ax[a, b + 1].set_visible(False)
                         break
-        plt.subplots_adjust(hspace=1.2)
+        plt.subplots_adjust(hspace=1.5)
         hold.pyplot(fig, use_container_width=False)
     elif not (st.session_state.menu in ['All', 'Top Movements']) or st.session_state.top_menu != 'All':
         # with st.container:
