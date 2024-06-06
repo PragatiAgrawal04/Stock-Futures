@@ -318,7 +318,8 @@ def frag_table(table_number, selected_option='UBL', exp_option=EXP_OPTION):
         else:
             curr.to_csv('history.csv', mode='a', index=False, header=False)
 
-
+#########################################################################################################
+st.markdown("## <center>OPTION CHAIN ANALYSIS</center>")
 hist = pd.read_csv("history.csv")
 hist_df = pd.DataFrame(hist)
 
