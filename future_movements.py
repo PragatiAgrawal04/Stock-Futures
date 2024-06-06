@@ -295,7 +295,7 @@ def frag_plots(symb, data_x, data_y, cp, hold):
                     else:
                         ax[a, b + 1].set_visible(False)
                         break
-        plt.subplots_adjust(hspace=0.2)
+        plt.subplots_adjust(hspace=1.2)
         hold.pyplot(fig, use_container_width=False)
     elif not (st.session_state.menu in ['All', 'Top Movements']) or st.session_state.top_menu != 'All':
         # with st.container:
