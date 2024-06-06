@@ -70,7 +70,7 @@ def current_market_price(ticker):
     chk_date = datetime.date.today()
     nifty_cash_data = nifty_cash(chk_date, yfsymb)
     current_price = list(nifty_cash_data['Close'])[-1]
-    return current_price
+    return round(current_price,2)
     
 
 def fifty_two_week_high_low(ticker, exchange):
@@ -79,8 +79,8 @@ def fifty_two_week_high_low(ticker, exchange):
     yfsymb = (yf_stock_symbol_list[stk_symbol_list.index(ticker)])
     chk_date = datetime.date.today()
     data = yf.download(yfsymb, period="1y", auto_adjust=True, prepost=True, threads=True)
-    low_52_week = float(data['Low'].min())
-    high_52_week = float(data['High'].max())
+    low_52_week = round(float(data['Low'].min()),2)
+    high_52_week = round(float(data['High'].max()),2)
     return low_52_week, high_52_week
 
 
