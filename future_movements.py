@@ -12,7 +12,7 @@ import math
 import time
 
 st.set_page_config(
-    page_title="Future Movements",
+    page_title="FUTSTK",
     layout="wide",  # Use the entire screen width
     initial_sidebar_state="collapsed",  # Initially hide the sidebar
 )
