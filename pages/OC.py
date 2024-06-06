@@ -12,7 +12,9 @@ st.set_page_config(page_title = "OPTSTK", layout="wide", initial_sidebar_state="
 st.sidebar.header("OC")
 exchange = "NSE"
 ATM = 0
-
+symbols = pd.read_csv('symbols.csv')
+stk_symbol_list = list(symbols['stock_symbols'])
+yf_stock_symbol_list = list(symbols['stk_symbol_yf'])
 
 def last_thursdays(year):
     exp = []
@@ -50,20 +52,15 @@ for i in range(len(exp_date_list)):
 EXP_OPTION = DATE_LIST[0]
 
 
-def current_market_price(ticker, exchange):
-    if ticker == "NIFTY":
-        url = f"https://www.google.com/finance/quote/NIFTY:INDEXNSE"
-    else:
-        url = f"https://www.google.com/finance/quote/{ticker}:{exchange}"
-
-    for _ in range(1000000):
-        response = requests.get(url)
-        soup = BeautifulSoup(response.text, 'html.parser')
-        class1 = "YMlKec fxKbKc"
-
-        price = float(soup.find(class_=class1).text.strip()[1:].replace(",", ""))
-        return price
-
+def current_market_price(ticker):
+    global yf_stock_symbol_list
+    global stk_symbol_list
+    yfsymb = (yf_stock_symbol_list[stk_symbol_list.index(ticker)])
+    chk_date = date.today()
+    nifty_cash_data = nifty_cash(chk_date, yfsymb)
+    current_price = list(nifty_cash_data['Close'])[-1]
+    return current_price
+    
 
 def fifty_two_week_high_low(ticker, exchange):
     url = f"https://www.google.com/finance/quote/{ticker}:{exchange}"
