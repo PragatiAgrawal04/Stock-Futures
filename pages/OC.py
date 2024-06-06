@@ -60,7 +60,7 @@ def current_market_price(ticker, exchange):
         class1 = "YMlKec fxKbKc"
 
         price = float(soup.find(class_=class1).text.strip()[1:].replace(",", ""))
-       return price
+    return price
 
 
 def fifty_two_week_high_low(ticker, exchange):
