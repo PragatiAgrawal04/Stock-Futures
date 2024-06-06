@@ -73,6 +73,7 @@ def extract_bhavcopy(opt):
             yy = str(i.year)
 
             url = "https://nsearchives.nseindia.com/content/historical/DERIVATIVES/" + yy + "/" + mm + "/fo" + f"{dd:02d}" + mm + yy + "bhav.csv.zip"
+            st.write(url)
             for filename, file in download_extract_zip(url, headers):
                 if filename.endswith('.csv'):
                     df = pd.read_csv(file)
