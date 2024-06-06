@@ -52,7 +52,7 @@ EXP_OPTION = DATE_LIST[0]
 
 
 def current_market_price(ticker, exchange):
-    data = yf.Ticker(instrument).history(period="1d", interval="1m")
+    data = yf.Ticker(ticker).history(period="1d", interval="1m")
     return data["Close"].iloc[-1]
     # url = f"https://www.google.com/finance/quote/{ticker}:{exchange}"
 
