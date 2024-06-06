@@ -52,6 +52,16 @@ for i in range(len(exp_date_list)):
 EXP_OPTION = DATE_LIST[0]
 
 
+def nifty_cash(date, symbol):
+    data = yf.download(symbol,start=date,end=date+timedelta(1),interval='1m')
+    data = pd.DataFrame(data)
+    #data['DateTime']=data.index
+    data['Date'] = [i.date() for i in data.index]
+    data['Time'] = [i.time() for i in data.index]
+    data = data[['Date', 'Time', 'Open', 'High', 'Low', 'Close']].reset_index(drop=True)
+    return data
+
+
 def current_market_price(ticker):
     global yf_stock_symbol_list
     global stk_symbol_list
