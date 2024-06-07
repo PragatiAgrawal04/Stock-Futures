@@ -290,7 +290,7 @@ def frag_table(table_number, selected_option='UBL', exp_option=EXP_OPTION):
     st.markdown('<style>.col_heading{text-align: center}</style>', unsafe_allow_html=True)
     output.columns = ['<div class="col_heading">' + col + '</div>' for col in output.columns]
 
-    st.write(output.to_html(escape=False), unsafe_allow_html=True, use_container_width=True)
+    st.write(output.to_html(escape=False), unsafe_allow_html=True)
 
     if ('share_list2' in st.session_state) and ('share_list3' in st.session_state):
         curr = pd.DataFrame({'table1': [st.session_state["share_list1"]],
