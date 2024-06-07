@@ -254,6 +254,7 @@ def frag_table(table_number, selected_option='UBL', exp_option=EXP_OPTION):
             ########################################## Stock LTP and Matrix #######################################
             stock_ltp = current_market_price(ticker)
             low_52_week, high_52_week = fifty_two_week_high_low(ticker, exchange)
+    st.markdown('---')
     d1, d2, d3, d4 = st.columns(4)
     with d1:
         st.markdown('##### CMP:  ' + str(stock_ltp))
