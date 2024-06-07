@@ -220,7 +220,7 @@ def frag_table(table_number, selected_option='UBL', exp_option=EXP_OPTION):
     global ATM
     global OPT
     shares = pd.read_csv("FNO Stocks - All FO Stocks List, Technical Analysis Scanner.csv")
-    share_list = list(shares["Symbol"])+["NIFTY","BANKNFTY"]
+    share_list = list(shares["Symbol"])+["NIFTY","BANKNIFTY"]
     share_list.sort()
     selected_option = selected_option.strip()
     share_list.remove(selected_option)
