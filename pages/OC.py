@@ -255,7 +255,7 @@ def frag_table(table_number, selected_option='UBL', exp_option=EXP_OPTION):
             stock_ltp = current_market_price(ticker)
             low_52_week, high_52_week = fifty_two_week_high_low(ticker, exchange)
 
-    st.divider()
+    st.write("---")
     d1, d2, d3, d4 = st.columns(4)
     with d1:
         st.markdown('##### CMP:  ' + str(stock_ltp))
@@ -265,7 +265,7 @@ def frag_table(table_number, selected_option='UBL', exp_option=EXP_OPTION):
         st.markdown('##### 52 week low:  ' + str(low_52_week))
     with d4:
         st.markdown('##### 52 week high:  ' + str(high_52_week))
-    st.divider()
+    st.write("---")
     
     output_ce = output_ce[
         ['strikePrice', 'pchangeinOpenInterest', 'pChange', 'totalTradedVolume', 'impliedVolatility', 'lastPrice',
