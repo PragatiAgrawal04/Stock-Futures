@@ -7,6 +7,7 @@ from bs4 import BeautifulSoup
 import datetime
 import streamlit as st
 import yfinance as yf
+import pytz
 import csv
 
 st.set_page_config(page_title="OPTSTK", layout="wide", initial_sidebar_state="collapsed")
@@ -257,7 +258,7 @@ def frag_table(table_number, selected_option='UBL', exp_option=EXP_OPTION):
     with d1:
         st.markdown('##### CMP:  ' + str(stock_ltp))
     with d2:
-        st.markdown('##### Time:  ' + datetime.datetime.now().strftime("%H:%M:%S"))
+        st.markdown('##### Time:  ' + datetime.datetime.now(pytz.timezone('Asia/Kolkata')).strftime("%H:%M:%S"))
     with d3:
         st.markdown('##### 52 week low:  ' + str(low_52_week))
     with d4:
