@@ -112,6 +112,7 @@ def get_dataframe(ticker, exp_date_selected):
     cookies = response.cookies
     if ticker == "NIFTY" or ticker == "BANKNIFTY":
         url = f"https://www.nseindia.com/api/option-chain-indices?symbol={ticker}"
+        st.write(url)
     else:
         url = f"https://www.nseindia.com/api/option-chain-equities?symbol={ticker}"
     option_chain_data = requests.get(url, headers=headers, cookies=cookies)
