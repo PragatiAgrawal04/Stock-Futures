@@ -253,7 +253,7 @@ def frag_table(table_number, selected_option='UBL', exp_option=EXP_OPTION):
     #         date_list.append(exp_date_list[i].strftime('%d-%m-%Y'))
     c1, c2 = st.columns(2)
     with c1:
-        selected_option = st.selectbox("### Share List", share_list, key="share_list" + str(table_number))
+        selected_option = st.selectbox("Share List", share_list, key="share_list" + str(table_number))
     with c2:
         exp_option = st.selectbox("Expiry Date", exp_date_list_sel, key="exp_list" + str(table_number))
         if selected_option in share_list:
