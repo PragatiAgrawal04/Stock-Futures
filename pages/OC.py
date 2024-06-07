@@ -112,7 +112,6 @@ def get_dataframe(ticker, exp_date_selected):
     cookies = response.cookies
     if ticker == "NIFTY" or ticker == "BANKNIFTY":
         url = f"https://www.nseindia.com/api/option-chain-indices?symbol={ticker}"
-        st.write(url)
     else:
         url = f"https://www.nseindia.com/api/option-chain-equities?symbol={ticker}"
     option_chain_data = requests.get(url, headers=headers, cookies=cookies)
@@ -165,6 +164,7 @@ def get_dataframe(ticker, exp_date_selected):
 
     # (subset_ce (CE))
     subset_ce = fd[(fd.instrumentType == "CE") & (fd.expiryDate == adjusted_expiry)].reset_index(drop=True)
+    print(subset_ce)
     ind_atm_ce = subset_ce[(subset_ce.strikePrice == atm_price)].index.tolist()[0]
     subset_ce = subset_ce.loc[ind_atm_ce-10:ind_atm_ce+10,].reset_index(drop=True)
     output_ce = pd.concat([output_ce, subset_ce]).reset_index(drop=True)
