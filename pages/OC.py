@@ -18,7 +18,16 @@ ATM = 0
 symbols = pd.read_csv('symbols.csv')
 stk_symbol_list = list(symbols['stock_symbols'])
 yf_stock_symbol_list = list(symbols['stk_symbol_yf'])
-
+st.markdown("""
+        <style>
+               .block-container {
+                    padding-top: 1rem;
+                    padding-bottom: 0rem;
+                    padding-left: 5rem;
+                    padding-right: 5rem;
+                }
+        </style>
+        """, unsafe_allow_html=True)
 
 def last_thursdays(year):
     exp = []
