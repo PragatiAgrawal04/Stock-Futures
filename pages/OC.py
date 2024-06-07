@@ -110,7 +110,7 @@ def get_dataframe(ticker, exp_date_selected):
     main_url = "https://www.nseindia.com/"
     response = requests.get(main_url, headers=headers)
     cookies = response.cookies
-    if ticker == "NIFTY":
+    if ticker == "NIFTY" or ticker == "BANKNIFTY":
         url = f"https://www.nseindia.com/api/option-chain-indices?symbol={ticker}"
     else:
         url = f"https://www.nseindia.com/api/option-chain-equities?symbol={ticker}"
@@ -219,7 +219,7 @@ def frag_table(table_number, selected_option='UBL', exp_option=EXP_OPTION):
     global ATM
     global OPT
     shares = pd.read_csv("FNO Stocks - All FO Stocks List, Technical Analysis Scanner.csv")
-    share_list = list(shares["Symbol"])+["NIFTY"]
+    share_list = list(shares["Symbol"])+["NIFTY","BANKNFTY"]
     share_list.sort()
     selected_option = selected_option.strip()
     share_list.remove(selected_option)
