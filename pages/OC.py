@@ -9,7 +9,7 @@ import streamlit as st
 import yfinance as yf
 import csv
 
-st.set_page_config(page_title = "OPTSTK", layout="wide", initial_sidebar_state="collapsed")
+st.set_page_config(page_title="OPTSTK", layout="wide", initial_sidebar_state="collapsed")
 st.sidebar.header("OC")
 st.sidebar.write("Categorization of Call and Put options into 4 tabs: LB, SB, SC, LL")
 exchange = "NSE"
@@ -17,6 +17,7 @@ ATM = 0
 symbols = pd.read_csv('symbols.csv')
 stk_symbol_list = list(symbols['stock_symbols'])
 yf_stock_symbol_list = list(symbols['stk_symbol_yf'])
+
 
 def last_thursdays(year):
     exp = []
@@ -55,9 +56,9 @@ EXP_OPTION = DATE_LIST[0]
 
 
 def nifty_cash(date, symbol):
-    data = yf.download(symbol,start=date,end=date+datetime.timedelta(1),interval='1m')
+    data = yf.download(symbol, start=date, end=date + datetime.timedelta(1), interval='1m')
     data = pd.DataFrame(data)
-    #data['DateTime']=data.index
+    # data['DateTime']=data.index
     data['Date'] = [i.date() for i in data.index]
     data['Time'] = [i.time() for i in data.index]
     data = data[['Date', 'Time', 'Open', 'High', 'Low', 'Close']].reset_index(drop=True)
@@ -71,8 +72,8 @@ def current_market_price(ticker):
     chk_date = datetime.date.today()
     nifty_cash_data = nifty_cash(chk_date, yfsymb)
     current_price = list(nifty_cash_data['Close'])[-1]
-    return round(current_price,2)
-    
+    return round(current_price, 2)
+
 
 def fifty_two_week_high_low(ticker, exchange):
     global yf_stock_symbol_list
@@ -80,8 +81,8 @@ def fifty_two_week_high_low(ticker, exchange):
     yfsymb = (yf_stock_symbol_list[stk_symbol_list.index(ticker)])
     chk_date = datetime.date.today()
     data = yf.download(yfsymb, period="1y", auto_adjust=True, prepost=True, threads=True)
-    low_52_week = round(float(data['Low'].min()),2)
-    high_52_week = round(float(data['High'].max()),2)
+    low_52_week = round(float(data['Low'].min()), 2)
+    high_52_week = round(float(data['High'].max()), 2)
     return low_52_week, high_52_week
 
 
@@ -134,7 +135,7 @@ def get_dataframe(ticker, exp_date_selected):
     atm_price = current_market_price(ticker)
     diffdata = pd.DataFrame({"Strike": strike, "Difference": [abs(x - atm_price) for x in strike]})
     atm_price = diffdata.loc[diffdata['Difference'] == diffdata['Difference'].min()]['Strike'].head(1).item()
-    
+
     output_ce = pd.DataFrame()
     output_pe = pd.DataFrame()
 
@@ -166,14 +167,14 @@ def get_dataframe(ticker, exp_date_selected):
     subset_ce = fd[(fd.instrumentType == "CE") & (fd.expiryDate == adjusted_expiry)].reset_index(drop=True)
     print(subset_ce)
     ind_atm_ce = subset_ce[(subset_ce.strikePrice == atm_price)].index.tolist()[0]
-    subset_ce = subset_ce.loc[ind_atm_ce-10:ind_atm_ce+10,].reset_index(drop=True)
+    subset_ce = subset_ce.loc[ind_atm_ce - 10:ind_atm_ce + 10, ].reset_index(drop=True)
     output_ce = pd.concat([output_ce, subset_ce]).reset_index(drop=True)
     output_ce = categorize(output_ce)
 
     # (subset_pe (PE))
     subset_pe = fd_pe[(fd_pe.instrumentType == "PE") & (fd_pe.expiryDate == adjusted_expiry_pe)].reset_index(drop=True)
     ind_atm_pe = subset_pe[(subset_pe.strikePrice == atm_price)].index.tolist()[0]
-    subset_pe = subset_pe.loc[ind_atm_pe-10:ind_atm_pe+10, ].reset_index(drop=True)
+    subset_pe = subset_pe.loc[ind_atm_pe - 10:ind_atm_pe + 10, ].reset_index(drop=True)
     output_pe = pd.concat([output_pe, subset_pe]).reset_index(drop=True)
     output_pe = categorize(output_pe)
 
@@ -187,9 +188,9 @@ def highlight_background(s):
     global ATM
     atm = ATM
     if s.STR_PRICE >= atm:
-        col = ['background-color: white']*7+['background-color: antiquewhite']*6
+        col = ['background-color: white'] * 7 + ['background-color: antiquewhite'] * 6
     elif s.STR_PRICE < atm:
-        col = ['background-color: antiquewhite']*6+['background-color: white']*7
+        col = ['background-color: antiquewhite'] * 6 + ['background-color: white'] * 7
     return col
 
 
@@ -206,21 +207,22 @@ def highlight_text(s):
     else:
         colpe = 'red'
     if colce == 'green' and colpe == 'green':
-        col = ['color: black']*5+['color: green']+['color: black']*6+['color: green']
+        col = ['color: black'] * 5 + ['color: green'] + ['color: black'] * 6 + ['color: green']
     elif colce == 'green' and colpe == 'red':
-        col = ['color: black']*5+['color: green']+['color: black']*6+['color: red']
+        col = ['color: black'] * 5 + ['color: green'] + ['color: black'] * 6 + ['color: red']
     elif colce == 'red' and colpe == 'green':
-        col = ['color: black']*5+['color: red']+['color: black']*6+['color: green']
+        col = ['color: black'] * 5 + ['color: red'] + ['color: black'] * 6 + ['color: green']
     else:
-        col = ['color: black']*5+['color: red']+['color: black']*6+['color: red']
+        col = ['color: black'] * 5 + ['color: red'] + ['color: black'] * 6 + ['color: red']
     return col
+
 
 @st.experimental_fragment
 def frag_table(table_number, selected_option='UBL', exp_option=EXP_OPTION):
     global ATM
     global OPT
     shares = pd.read_csv("FNO Stocks - All FO Stocks List, Technical Analysis Scanner.csv")
-    share_list = list(shares["Symbol"])+["NIFTY","BANKNIFTY"]
+    share_list = list(shares["Symbol"]) + ["NIFTY"]
     share_list.sort()
     selected_option = selected_option.strip()
     share_list.remove(selected_option)
@@ -251,15 +253,19 @@ def frag_table(table_number, selected_option='UBL', exp_option=EXP_OPTION):
             ########################################## Stock LTP and Matrix #######################################
             stock_ltp = current_market_price(ticker)
             low_52_week, high_52_week = fifty_two_week_high_low(ticker, exchange)
-    d1, d2, d3 = st.columns(3)
+    d1, d2, d3, d4 = st.columns(4)
     with d1:
-        st.write(f'CMP:', stock_ltp)
+        st.markdown('##### CMP:  ' + str(stock_ltp))
     with d2:
-        st.write(f'52 week low:', low_52_week)
+        st.markdown('##### Time:  ' + datetime.datetime.now().strftime("%H:%M:%S"))
     with d3:
-        st.write(f'52 week high:', high_52_week)
+        st.markdown('##### 52 week low:  ' + str(low_52_week))
+    with d4:
+        st.markdown('##### 52 week high:  ' + str(high_52_week))
 
-    output_ce = output_ce[['strikePrice', 'pchangeinOpenInterest', 'pChange', 'totalTradedVolume', 'impliedVolatility', 'lastPrice', 'Category']]
+    output_ce = output_ce[
+        ['strikePrice', 'pchangeinOpenInterest', 'pChange', 'totalTradedVolume', 'impliedVolatility', 'lastPrice',
+         'Category']]
     output_ce = output_ce.rename(columns={'strikePrice': 'STR_PRICE',
                                           'pchangeinOpenInterest': 'OI%_CE',
                                           'totalTradedVolume': 'Volume_CE',
@@ -267,7 +273,8 @@ def frag_table(table_number, selected_option='UBL', exp_option=EXP_OPTION):
                                           'lastPrice': 'LTP_CE',
                                           'pChange': '%Change_CE',
                                           'Category': 'Category_CE'})
-    output_pe = output_pe[['strikePrice', 'pchangeinOpenInterest', 'pChange', 'totalTradedVolume', 'impliedVolatility', 'lastPrice',
+    output_pe = output_pe[
+        ['strikePrice', 'pchangeinOpenInterest', 'pChange', 'totalTradedVolume', 'impliedVolatility', 'lastPrice',
          'Category']]
     output_pe = output_pe.rename(columns={'strikePrice': 'STR_PRICE',
                                           'pchangeinOpenInterest': 'OI%_PE',
@@ -278,7 +285,7 @@ def frag_table(table_number, selected_option='UBL', exp_option=EXP_OPTION):
                                           'Category': 'Category_PE'})
     output = pd.merge(output_ce, output_pe, on='STR_PRICE')
     cols = output.columns.tolist()
-    output = output[cols[1:7]+[cols[0]]+cols[7:]]
+    output = output[cols[1:7] + [cols[0]] + cols[7:]]
     output = output.style.apply(highlight_background, axis=1)
     output = output.apply(highlight_text, axis=1)
     output = output.set_properties(
@@ -305,6 +312,7 @@ def frag_table(table_number, selected_option='UBL', exp_option=EXP_OPTION):
             curr.to_csv('history.csv', mode='w', index=False, header=True)
         else:
             curr.to_csv('history.csv', mode='a', index=False, header=False)
+
 
 #########################################################################################################
 st.markdown('## OPTION CHAIN ANALYSIS')
