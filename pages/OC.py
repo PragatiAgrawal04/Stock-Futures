@@ -264,7 +264,6 @@ def frag_table(table_number, selected_option='UBL', exp_option=EXP_OPTION):
             stock_ltp = current_market_price(ticker)
             low_52_week, high_52_week = fifty_two_week_high_low(ticker, exchange)
 
-    st.write("---")
     d1, d2, d3, d4 = st.columns(4)
     with d1:
         st.markdown('##### CMP:  ' + str(stock_ltp))
@@ -274,7 +273,6 @@ def frag_table(table_number, selected_option='UBL', exp_option=EXP_OPTION):
         st.markdown('##### 52 week low:  ' + str(low_52_week))
     with d4:
         st.markdown('##### 52 week high:  ' + str(high_52_week))
-    st.write("---")
     
     output_ce = output_ce[
         ['strikePrice', 'pchangeinOpenInterest', 'pChange', 'totalTradedVolume', 'impliedVolatility', 'lastPrice',
@@ -325,7 +323,7 @@ def frag_table(table_number, selected_option='UBL', exp_option=EXP_OPTION):
             curr.to_csv('history.csv', mode='w', index=False, header=True)
         else:
             curr.to_csv('history.csv', mode='a', index=False, header=False)
-    
+    st.write("---")
 #########################################################################################################
 st.markdown('## OPTION CHAIN ANALYSIS')
 hist = pd.read_csv("history.csv")
