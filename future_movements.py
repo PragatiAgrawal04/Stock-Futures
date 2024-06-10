@@ -339,7 +339,7 @@ if "top_menu" not in st.session_state:
 
 all_stocks_data = extract_bhavcopy(option)
 nift = extract_bhavcopy('FUTIDX')
-nift = nift.loc[nift['SYMBOL'].any(['NIFTY', 'BANKNIFTY', 'FINNIFTY'])
+nift = nift.loc[nift['SYMBOL'].any(['NIFTY', 'BANKNIFTY', 'FINNIFTY'])]
 all_stocks_data = pd.concat([all_stocks_data, nift], axis=0).reset_index(drop=True)
 # all_stocks_data = pd.concat([all_stocks_data, aa], axis=0).reset_index(drop=True)
 action_data_all_stk = pd.DataFrame()
