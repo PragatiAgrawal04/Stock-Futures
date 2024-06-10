@@ -5,6 +5,7 @@ import time
 import xlwings as xw
 from bs4 import BeautifulSoup
 import datetime
+import pytz
 import streamlit as st
 import yfinance as yf
 import csv
@@ -288,7 +289,7 @@ def frag_table(table_number, selected_option='UBL'):
         st.markdown('<h4 style="color: black;font-size: 20px;">CMP:  ' + str(stock_ltp)+"</h4>", unsafe_allow_html=True)
     with d2:
         st.markdown('<h4 style="color: black;font-size: 20px;">TIME:  ' +
-                    datetime.datetime.now().strftime("%H:%M:%S")+"</h4>", unsafe_allow_html=True)
+                    datetime.datetime.now(pytz.timezone('Asia/Kolkata')).strftime("%H:%M:%S")+"</h4>", unsafe_allow_html=True)
     with d3:
         st.markdown('<h4 style="color: red;font-size: 20px;">52 Week LOW:  '+str(low_52_week)+"</h4>", unsafe_allow_html=True)
     with d4:
@@ -311,7 +312,6 @@ def frag_table(table_number, selected_option='UBL'):
                                        text-align:center;">
                             BULLISH
                             </h4>""", unsafe_allow_html=True)
-            print("BULLISH***************************")
         elif (
                 (
                         ((itm_ce_count['SB'] + itm_ce_count['LL']) > 5) and ((otm_ce_count['LL'] + otm_ce_count['SB']) > 5)
@@ -346,7 +346,6 @@ def frag_table(table_number, selected_option='UBL'):
                                        text-align:center;">
                             NA
                             </h4>""", unsafe_allow_html=True)
-            print("NA************************")
 
     output_ce = output_ce[
         ['strikePrice', 'pchangeinOpenInterest', 'pChange', 'totalTradedVolume', 'impliedVolatility', 'lastPrice',
