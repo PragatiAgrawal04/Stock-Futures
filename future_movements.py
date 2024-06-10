@@ -154,6 +154,7 @@ def chk_pnl_stock(actfutdata, holder):
             while (test_date.strftime("%A") in ['Saturday', 'Sunday']) or (test_date in holidays):
                 test_date = test_date - timedelta(1)
             nifty_cash_data = nifty_cash(chk_date, yfsymb)
+            print(nifty_cash_data)
             yest_closing = actfutdata.loc[(actfutdata['TIMESTAMP'] == test_date) &
                                           (actfutdata['EXPIRY_DT'] == actfutdata['EXPIRY_DT'].unique()[0]) &
                                           (actfutdata['SYMBOL'] == i)]['CLOSE'].item()
