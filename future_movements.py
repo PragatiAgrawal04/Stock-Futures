@@ -297,8 +297,6 @@ def frag_plots(symb, data_x, data_y, cp, hold):
         plt.subplots_adjust(hspace=1.5)
         hold.pyplot(fig, use_container_width=False)
     elif not (st.session_state.menu in ['All', 'Top Movements']) or st.session_state.top_menu != 'All':
-        # with st.container:
-        print(cp[0])
         # st.write('<style>.center {justify-content: center;align-items: center}</style><div class="center">Chart1', unsafe_allow_html=True)
         fig, ax = plt.subplots(figsize=(10, 5))
         plt.title(symb[0] + "| CP:" + str(np.round(cp[0], 2)))
@@ -339,9 +337,7 @@ if "top_menu" not in st.session_state:
 all_stocks_data = extract_bhavcopy(option)
 nift = extract_bhavcopy('FUTIDX')
 nift = nift.loc[(nift['SYMBOL'] == 'NIFTY') | (nift['SYMBOL'] == 'BANKNIFTY') | (nift['SYMBOL'] == 'FINNIFTY')]
-print(nift)
 all_stocks_data = pd.concat([all_stocks_data, nift], axis=0).reset_index(drop=True)
-# all_stocks_data = pd.concat([all_stocks_data, aa], axis=0).reset_index(drop=True)
 action_data_all_stk = pd.DataFrame()
 for i in stk_symbol_list:
     one_stock_data = all_stocks_data.loc[(all_stocks_data['SYMBOL'] == i) & (
