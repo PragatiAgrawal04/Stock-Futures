@@ -200,6 +200,7 @@ def frag(box_num, action_data):
         else:
             st.session_state.menu = men_opt
 
+
     menu_option_list = ['All', 'Top Movements']
     menu_option_list = menu_option_list + stk_symbol_list
     menu_option = st.selectbox("Select Category", menu_option_list, key='menu_option')
@@ -340,12 +341,10 @@ nift = nift.loc[(nift['SYMBOL'] == 'NIFTY') | (nift['SYMBOL'] == 'BANKNIFTY') | 
 all_stocks_data = pd.concat([all_stocks_data, nift], axis=0).reset_index(drop=True)
 action_data_all_stk = pd.DataFrame()
 for i in stk_symbol_list:
-    one_stock_data = all_stocks_data.loc[(all_stocks_data['SYMBOL'] == i) & (
-            all_stocks_data['EXPIRY_DT'] == list(all_stocks_data['EXPIRY_DT'].unique())[0])]
+    one_symbol_data = all_stocks_data.loc[(all_stocks_data['SYMBOL'] == i)].reset_index(drop=True)
+    one_stock_data = one_symbol_data.loc[one_symbol_data['EXPIRY_DT'] == list(one_symbol_data['EXPIRY_DT'].unique())[0]]
     action_data_one_stk = action_setting(one_stock_data)
     action_data_all_stk = pd.concat([action_data_all_stk, action_data_one_stk], ignore_index=True)
 
-action_data_all_stk = action_data_all_stk.loc[
-    (action_data_all_stk['EXPIRY_DT'] == list(action_data_all_stk['EXPIRY_DT'].unique())[0])].reset_index(drop=True)
 # st.dataframe(action_data_all_stk)
 frag(1, action_data_all_stk)
