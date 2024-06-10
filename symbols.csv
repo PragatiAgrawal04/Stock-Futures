@@ -182,4 +182,6 @@ WIPRO,WIPRO.NS,,
 ZEEL,ZEEL.NS,,
 ZYDUSLIFE,ZYDUSLIFE.NS,,
 NIFTY,^nsei,,
-BANKNIFTY,^nsebank
+BANKNIFTY,^nsebank,,
+FINNIFTY,nifty_fin_service.ns,,
+MIDCPNIFTY,
