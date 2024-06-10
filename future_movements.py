@@ -154,7 +154,6 @@ def chk_pnl_stock(actfutdata, holder):
             while (test_date.strftime("%A") in ['Saturday', 'Sunday']) or (test_date in holidays):
                 test_date = test_date - timedelta(1)
             nifty_cash_data = nifty_cash(chk_date, yfsymb)
-            print(nifty_cash_data)
             yest_closing = actfutdata.loc[(actfutdata['TIMESTAMP'] == test_date) &
                                           (actfutdata['EXPIRY_DT'] == actfutdata['EXPIRY_DT'].unique()[0]) &
                                           (actfutdata['SYMBOL'] == i)]['CLOSE'].item()
@@ -173,7 +172,6 @@ def chk_pnl_stock(actfutdata, holder):
                 y.append(yitem)
             x.append([str(i.hour) + ":" + str(i.minute) for i in nifty_cash_data['Time']])
             current_price.append(list(nifty_cash_data['Close'])[-1])
-            print(nifty_cash_data['Close'])
             nifty_cash_data = pd.concat([pd.DataFrame({"Symbol": [i] * len(nifty_cash_data)}), nifty_cash_data], axis=1)
             nifty_cash_all_data = pd.concat([nifty_cash_all_data, nifty_cash_data], axis=0).reset_index(drop=True)
     movement = [0]
