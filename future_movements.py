@@ -313,7 +313,6 @@ def frag_table(table_number, selected_option='UBL'):
                                        text-align:center;">
                             BULLISH
                             </h4>""", unsafe_allow_html=True)
-            print("BULLISH***************************")
         elif (
                 (
                         ((itm_ce_count['SB'] + itm_ce_count['LL']) > 5) and ((otm_ce_count['LL'] + otm_ce_count['SB']) > 5)
@@ -348,7 +347,6 @@ def frag_table(table_number, selected_option='UBL'):
                                        text-align:center;">
                             NA
                             </h4>""", unsafe_allow_html=True)
-            print("NA************************")
 
     output_ce = output_ce[
         ['strikePrice', 'pchangeinOpenInterest', 'pChange', 'totalTradedVolume', 'impliedVolatility', 'lastPrice',
