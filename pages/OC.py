@@ -7,7 +7,6 @@ from bs4 import BeautifulSoup
 import datetime
 import streamlit as st
 import yfinance as yf
-import pytz
 import csv
 
 st.set_page_config(page_title="OPTSTK", layout="wide", initial_sidebar_state="collapsed")
@@ -26,49 +25,65 @@ st.markdown("""
                     padding-left: 5rem;
                     padding-right: 5rem;
                 }
+
         </style>
         """, unsafe_allow_html=True)
 
-def last_thursdays(year):
+
+# st.markdown("""
+# <style>
+#     .st-selectbox > option {
+#         font-weight: bold;
+#     }
+# </style>
+# """, unsafe_allow_html=True)
+def get_expiry_date_list(symb):
+    year = datetime.datetime.now().year
+    month = datetime.datetime.now().month
+    day = datetime.datetime.now().day
     exp = []
-    for month in [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]:
-        if month == 1 or month == 2 or month == 3 or month == 4 or month == 5 or month == 6 or month == 7 or month == 8 or month == 9:
+
+    for month in range(month,13):
+        if month <= 9:
             date = f"{year}-0{month}-01"
-        if month == 10 or month == 11 or month == 12:
+        else:
             date = f"{year}-{month}-01"
+        df_month = pd.to_datetime(date)
+        if symb in ['BANKNIFTY', 'NIFTY', 'FINNIFTY']:
+            if symb == 'BANKNIFTY':
+                last_date = (df_month + pd.tseries.offsets.MonthEnd(1)).day
+                day_ind = 2
+            elif symb == 'NIFTY':
+                last_date = (df_month + pd.tseries.offsets.MonthEnd(1)).day
+                day_ind = 3
+            elif symb == 'FINNIFTY':
+                last_date = (df_month + pd.tseries.offsets.MonthEnd(1)).day
+                day_ind = 1
+            elif symb == 'MIDCPNIFTY':
+                last_date = (df_month + pd.tseries.offsets.MonthEnd(1)).day
+                day_ind = 0
+            for day in range(day, last_date):
+                date = datetime.date(year, month, day)
+                if date.weekday() == day_ind:
+                    exp.append(date)
+        else:
+            last_date = df_month + pd.tseries.offsets.MonthEnd(1)
+            offset = (last_date.weekday() - 3) % 7
+            df_expiry = last_date - pd.to_timedelta(offset, unit='D')
+            exp.append(df_expiry.date())
+    date_list = []
+    today = datetime.date.today()
+    for i in range(len(exp)):
+        x = (exp[i] - today).days
+        if x >= 0:
+            date_list.append(exp[i].strftime('%d-%m-%Y'))
 
-        # we have a datetime series in our dataframe...
-        df_Month = pd.to_datetime(date)
-
-        # we can easily get the month's end date:
-        df_mEnd = df_Month + pd.tseries.offsets.MonthEnd(1)
-
-        # Thursday is weekday 3, so the offset for given weekday is
-        offset = (df_mEnd.weekday() - 3) % 7
-
-        # now to get the date of the last Thursday of the month, subtract it from
-        # month end date:
-        df_Expiry = df_mEnd - pd.to_timedelta(offset, unit='D')
-        exp.append(df_Expiry.date())
-
-    return exp
-
-
-today_year = datetime.datetime.now().year
-exp_date_list = last_thursdays(today_year)
-DATE_LIST = []
-TODAY = datetime.date.today()
-for i in range(len(exp_date_list)):
-    x = (exp_date_list[i] - TODAY).days
-    if x >= 0:
-        DATE_LIST.append(exp_date_list[i].strftime('%d-%m-%Y'))
-EXP_OPTION = DATE_LIST[0]
+    return date_list
 
 
 def nifty_cash(date, symbol):
     data = yf.download(symbol, start=date, end=date + datetime.timedelta(1), interval='1m')
     data = pd.DataFrame(data)
-    # data['DateTime']=data.index
     data['Date'] = [i.date() for i in data.index]
     data['Time'] = [i.time() for i in data.index]
     data = data[['Date', 'Time', 'Open', 'High', 'Low', 'Close']].reset_index(drop=True)
@@ -85,11 +100,10 @@ def current_market_price(ticker):
     return round(current_price, 2)
 
 
-def fifty_two_week_high_low(ticker, exchange):
+def fifty_two_week_high_low(ticker):
     global yf_stock_symbol_list
     global stk_symbol_list
     yfsymb = (yf_stock_symbol_list[stk_symbol_list.index(ticker)])
-    chk_date = datetime.date.today()
     data = yf.download(yfsymb, period="1y", auto_adjust=True, prepost=True, threads=True)
     low_52_week = round(float(data['Low'].min()), 2)
     high_52_week = round(float(data['High'].max()), 2)
@@ -121,7 +135,7 @@ def get_dataframe(ticker, exp_date_selected):
     main_url = "https://www.nseindia.com/"
     response = requests.get(main_url, headers=headers)
     cookies = response.cookies
-    if ticker == "NIFTY" or ticker == "BANKNIFTY":
+    if ticker in ['BANKNIFTY', 'NIFTY', 'FINNIFTY', 'MIDCPNIFTY']:
         url = f"https://www.nseindia.com/api/option-chain-indices?symbol={ticker}"
     else:
         url = f"https://www.nseindia.com/api/option-chain-equities?symbol={ticker}"
@@ -175,7 +189,6 @@ def get_dataframe(ticker, exp_date_selected):
 
     # (subset_ce (CE))
     subset_ce = fd[(fd.instrumentType == "CE") & (fd.expiryDate == adjusted_expiry)].reset_index(drop=True)
-    print(subset_ce)
     ind_atm_ce = subset_ce[(subset_ce.strikePrice == atm_price)].index.tolist()[0]
     subset_ce = subset_ce.loc[ind_atm_ce - 10:ind_atm_ce + 10, ].reset_index(drop=True)
     output_ce = pd.concat([output_ce, subset_ce]).reset_index(drop=True)
@@ -207,7 +220,6 @@ def highlight_background(s):
 def highlight_text(s):
     cat_ce = s.Category_CE
     cat_pe = s.Category_PE
-    colce, colpe = '', ''
     if cat_ce == 'LB' or cat_ce == 'SC':
         colce = 'green'
     else:
@@ -228,52 +240,114 @@ def highlight_text(s):
 
 
 @st.experimental_fragment
-def frag_table(table_number, selected_option='UBL', exp_option=EXP_OPTION):
+def frag_table(table_number, selected_option='UBL'):
     global ATM
-    global OPT
+    global DATE_LIST
+    global exp_date_list
     shares = pd.read_csv("FNO Stocks - All FO Stocks List, Technical Analysis Scanner.csv")
-    share_list = list(shares["Symbol"]) + ["NIFTY"]
+    share_list = list(shares["Symbol"])
     share_list.sort()
     selected_option = selected_option.strip()
     share_list.remove(selected_option)
     share_list = [selected_option] + share_list
 
-    exp_date_list_sel = DATE_LIST.copy()
-    print("LIST: ", exp_date_list_sel)
-    exp_option = datetime.datetime.strptime(exp_option, "%d-%m-%Y").date().strftime('%d-%m-%Y')
-    print("EXP_OPTION:", exp_option)
-    exp_date_list_sel.remove(exp_option)
-    exp_date_list_sel = [exp_option] + exp_date_list_sel
-    #
-    # date_list = []
-    # today_date = datetime.date.today()
-    # for i in range(len(exp_date_list)):
-    #     x = (exp_date_list[i] - today_date).days
-    #     if x > 0:
-    #         date_list.append(exp_date_list[i].strftime('%d-%m-%Y'))
+    # exp_date_list_sel = DATE_LIST.copy()
+    # exp_option = exp_date_list_sel[0]
+    # print("LIST: ", exp_date_list_sel)
+    # #exp_option = datetime.datetime.strptime(exp_option, "%d-%m-%Y").date().strftime('%d-%m-%Y')
+    # print("EXP_OPTION:", exp_option)
+    # exp_date_list_sel.remove(exp_option)
+
     c1, c2 = st.columns(2)
     with c1:
-        selected_option = st.selectbox("Share List", share_list, key="share_list" + str(table_number))
+        st.markdown('##### Share List')
+        selected_option = st.selectbox(label="", options=share_list, key="share_list" + str(table_number),
+                                       label_visibility='collapsed')
+        exp_date_list_sel = get_expiry_date_list(selected_option)
     with c2:
-        exp_option = st.selectbox("Expiry Date", exp_date_list_sel, key="exp_list" + str(table_number))
+        st.markdown('##### Expiry List')
+        exp_option = st.selectbox(label="", options=exp_date_list_sel, key="exp_list" + str(table_number),
+                                  label_visibility='collapsed')
         if selected_option in share_list:
             ticker = selected_option
             output_ce, output_pe, atm = get_dataframe(ticker, exp_option)
-            ATM = atm
-            ########################################## Stock LTP and Matrix #######################################
-            stock_ltp = current_market_price(ticker)
-            low_52_week, high_52_week = fifty_two_week_high_low(ticker, exchange)
 
-    d1, d2, d3, d4 = st.columns(4)
+    ATM = atm
+    stock_ltp = current_market_price(ticker)
+    low_52_week, high_52_week = fifty_two_week_high_low(ticker)
+
+    keys = ['LB', 'SC', 'SB', 'LL']
+
+    itm_ce_count = {key: output_ce.loc[:10]['Category'].tolist().count(key) for key in keys}
+    otm_ce_count = {key: output_ce.loc[10:]['Category'].tolist().count(key) for key in keys}
+    itm_pe_count = {key: output_pe.loc[10:]['Category'].tolist().count(key) for key in keys}
+    otm_pe_count = {key: output_pe.loc[:10]['Category'].tolist().count(key) for key in keys}
+
+    d1, d2, d3, d4, d5 = st.columns(5)
     with d1:
-        st.markdown('##### CMP:  ' + str(stock_ltp))
+        st.markdown('<h4 style="color: black;font-size: 20px;">CMP:  ' + str(stock_ltp)+"</h4>", unsafe_allow_html=True)
     with d2:
-        st.markdown('##### Time:  ' + datetime.datetime.now(pytz.timezone('Asia/Kolkata')).strftime("%H:%M:%S"))
+        st.markdown('<h4 style="color: black;font-size: 20px;">TIME:  ' +
+                    datetime.datetime.now().strftime("%H:%M:%S")+"</h4>", unsafe_allow_html=True)
     with d3:
-        st.markdown('##### 52 week low:  ' + str(low_52_week))
+        st.markdown('<h4 style="color: red;font-size: 20px;">52 Week LOW:  '+str(low_52_week)+"</h4>", unsafe_allow_html=True)
     with d4:
-        st.markdown('##### 52 week high:  ' + str(high_52_week))
-    
+        st.markdown('<h4 style="color: green;font-size: 20px;">52 Week HIGH:  ' + str(high_52_week) + "</h4>",
+                    unsafe_allow_html=True)
+    with d5:
+        trend = st.empty()
+        if (
+                (
+                        ((itm_pe_count['SB'] + itm_pe_count['LL']) > 5) and ((otm_pe_count['LL'] + otm_pe_count['SB']) > 5)
+                ) and (
+                        ((itm_ce_count['SC'] + itm_ce_count['LB']) >= 5) and ((otm_ce_count['LB'] + otm_ce_count['SC']) >= 5)
+                    )):
+            trend.markdown("""<h4 style="float: left;">
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;TREND:
+                            </h4>
+                            <h4 style="float: right; 
+                                       color: green;
+                                       font-size: 30px;
+                                       text-align:center;">
+                            BULLISH
+                            </h4>""", unsafe_allow_html=True)
+            print("BULLISH***************************")
+        elif (
+                (
+                        ((itm_ce_count['SB'] + itm_ce_count['LL']) > 5) and ((otm_ce_count['LL'] + otm_ce_count['SB']) > 5)
+                ) and (
+                        ((itm_pe_count['SC'] + itm_pe_count['LB']) >= 5) and ((otm_pe_count['LB'] + otm_pe_count['SC']) >= 5)
+                    )):
+            trend.markdown("""<h4 style="float: left;">TREND:
+                        </h4>
+                        <h4 style="float: right; 
+                                   color: red;
+                                   font-size: 30px;
+                                   text-align:center;">
+                        BEARISH
+                        </h4>""", unsafe_allow_html=True)
+        elif otm_ce_count['SB'] >= 5 and otm_pe_count['SB'] >= 5:
+            trend.markdown("""<h4 style="float: left;">
+                            &nbsp;TREND:
+                            </h4>
+                            <h4 style="float: right; 
+                                       color: blue;
+                                       font-size: 30px;
+                                       text-align:center;">
+                            SIDEWAYS
+                            </h4>""", unsafe_allow_html=True)
+        else:
+            trend.markdown("""<h4 style="float: left;">
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;TREND:
+                            </h4>
+                            <h4 style="float: right; 
+                                       color: black;
+                                       font-size: 30px;
+                                       text-align:center;">
+                            NA
+                            </h4>""", unsafe_allow_html=True)
+            print("NA************************")
+
     output_ce = output_ce[
         ['strikePrice', 'pchangeinOpenInterest', 'pChange', 'totalTradedVolume', 'impliedVolatility', 'lastPrice',
          'Category']]
@@ -304,8 +378,11 @@ def frag_table(table_number, selected_option='UBL', exp_option=EXP_OPTION):
         [{'selector': 'th', 'props': [('text-align', 'center')]}])
     output = output.format({'OI%_CE': "{:.2f}".format, '%Change_CE': "{:.1f}".format, 'LTP_CE': "{:.2f}".format,
                             'IV_CE': "{:.2f}".format, 'OI%_PE': "{:.2f}".format, '%Change_PE': "{:.1f}".format,
-                            'LTP_PE': "{:.2f}".format, 'IV_PE': "{:.2f}".format})
-    st.markdown('<style>.col_heading{text-align: center}</style>', unsafe_allow_html=True)
+                            'LTP_PE': "{:.2f}".format, 'IV_PE': "{:.2f}".format, 'STR_PRICE': "{:.1f}".format})
+    st.markdown("""<style>
+                    .col_heading
+                    {text-align: center;}
+                    </style>""", unsafe_allow_html=True)
     output.columns = ['<div class="col_heading">' + col + '</div>' for col in output.columns]
 
     st.write(output.to_html(escape=False), unsafe_allow_html=True)
@@ -324,6 +401,8 @@ def frag_table(table_number, selected_option='UBL', exp_option=EXP_OPTION):
         else:
             curr.to_csv('history.csv', mode='a', index=False, header=False)
     st.write("---")
+
+
 #########################################################################################################
 st.markdown('## OPTION CHAIN ANALYSIS')
 hist = pd.read_csv("history.csv")
@@ -334,9 +413,9 @@ print(len(hist_df))
 if len(hist_df) > 0:
     last_rec = hist_df.tail(1)
     print(last_rec)
-    frag_table(1, last_rec['table1'].item(), last_rec['exp1'].item())
-    frag_table(2, last_rec['table2'].item(), last_rec['exp2'].item())
-    frag_table(3, last_rec['table3'].item(), last_rec['exp3'].item())
+    frag_table(1, last_rec['table1'].item())
+    frag_table(2, last_rec['table2'].item())
+    frag_table(3, last_rec['table3'].item())
 else:
     frag_table(1, 'RELIANCE')
     frag_table(2, 'VEDL')
