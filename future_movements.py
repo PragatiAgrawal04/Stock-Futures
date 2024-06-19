@@ -342,10 +342,8 @@ all_stocks_data = pd.concat([all_stocks_data, nift], axis=0).reset_index(drop=Tr
 action_data_all_stk = pd.DataFrame()
 for i in stk_symbol_list:
     one_symbol_data = all_stocks_data.loc[(all_stocks_data['SYMBOL'] == i)].reset_index(drop=True)
-    print(i)
     eexp = list(set(list(one_symbol_data['EXPIRY_DT'])))[0]
-    print("-------------------",eexp)
-    #one_symbol_data = one_symbol_data.loc[one_symbol_data['EXPIRY_DT'] == ]
+    one_symbol_data = one_symbol_data.loc[one_symbol_data['EXPIRY_DT'] == eexp]
     action_data_one_stk = action_setting(one_symbol_data)
     action_data_all_stk = pd.concat([action_data_all_stk, action_data_one_stk], ignore_index=True)
 
