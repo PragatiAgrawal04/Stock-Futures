@@ -211,6 +211,7 @@ def highlight_background(s):
     elif s.Trend == 'SIDEWAYS':
         return ['background-color: cornflowerblue'] * len(s)
 #######################################################################################################################
+st.markdown("## OC Top 20 Trend Dashboard")
 st.markdown('<h4 style="color: black;font-size: 20px;">TIME:  ' +
                     datetime.datetime.now(pytz.timezone('Asia/Kolkata')).strftime("%H:%M:%S")+"</h4>", unsafe_allow_html=True)
 
