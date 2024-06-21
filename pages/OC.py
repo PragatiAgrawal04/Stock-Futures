@@ -40,11 +40,11 @@ st.markdown("""
 # """, unsafe_allow_html=True)
 def get_expiry_date_list(symb):
     year = datetime.datetime.now().year
-    month = datetime.datetime.now().month
+    month_now = datetime.datetime.now().month
     day_now = datetime.datetime.now().day
     exp = []
 
-    for month in range(month,13):
+    for month in range(month_now,13):
         if month <= 9:
             date = f"{year}-0{month}-01"
         else:
