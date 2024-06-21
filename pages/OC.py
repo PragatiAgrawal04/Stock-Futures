@@ -63,7 +63,11 @@ def get_expiry_date_list(symb):
             elif symb == 'MIDCPNIFTY':
                 last_date = (df_month + pd.tseries.offsets.MonthEnd(1)).day
                 day_ind = 0
-            for day in range(day_now, last_date):
+            if month == month_now:
+                    start_range = day_now
+            else:
+                    start_range = 1
+            for day in range(start_range, last_date):
                 date = datetime.date(year, month, day)
                 if date.weekday() == day_ind:
                     exp.append(date)
