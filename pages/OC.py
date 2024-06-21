@@ -262,10 +262,9 @@ def frag_table(table_number, selected_option='UBL'):
     c1, c2 = st.columns(2)
     with c1:
         st.markdown('##### Share List')
-        exp_date_list_sel = get_expiry_date_list(selected_option)
         selected_option = st.selectbox(label="", options=share_list, key="share_list" + str(table_number),
                                        label_visibility='collapsed')
-        
+        exp_date_list_sel = get_expiry_date_list(selected_option)
     with c2:
         st.markdown('##### Expiry List')
         exp_option = st.selectbox(label="", options=exp_date_list_sel, key="exp_list" + str(table_number),
