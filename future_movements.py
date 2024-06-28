@@ -220,7 +220,7 @@ def frag(box_num, action_data):
             action_data['TIMESTAMP'] == list(action_data['TIMESTAMP'].unique())[-1]].reset_index(drop=True)
         action_data = action_data.loc[
             (np.abs(action_data['Settle Price Change']) >= 2) &
-            (np.abs(action_data['Movement of OI']) >= 8)].reset_index(drop=True)
+            (np.abs(action_data['Movement of OI']) >= 8) & (np.abs(action_data['Movement of OI']) <= 10)].reset_index(drop=True)
         data_action.dataframe(action_data[['INSTRUMENT', 'SYMBOL', 'EXPIRY_DT', 'CLOSE', 'SETTLE_PR', 'TIMESTAMP',
                                            'Settle Price Change', 'Movement of OI', 'Category', 'Action']],
                               use_container_width=True)
