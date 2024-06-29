@@ -6,8 +6,8 @@ import xlwings as xw
 from bs4 import BeautifulSoup
 import datetime
 import streamlit as st
-import pytz
 import yfinance as yf
+import pytz
 import csv
 
 st.set_page_config(page_title="Dashboard", layout="wide", initial_sidebar_state="collapsed")
@@ -201,7 +201,7 @@ def get_dataframe(ticker, exp_date_selected):
     output_ce.reset_index(drop=True, inplace=True)
     output_pe.reset_index(drop=True, inplace=True)
 
-    return output_ce, output_pe, cmp
+    return output_ce, output_pe, cmp, atm_price
 
 
 def highlight_background(s):
@@ -225,10 +225,13 @@ dashboard = st.empty()
 for symbol in share_list:
     print(symbol)
     trend = ''
+    action = ''
+    buy = 0
+    short = 0
     exp_date_list_sel = get_expiry_date_list(symbol)
     latest_expiry = exp_date_list_sel[0]
     ticker = symbol
-    output_ce, output_pe, stock_ltp = get_dataframe(ticker, latest_expiry)
+    output_ce, output_pe, stock_ltp, atm = get_dataframe(ticker, latest_expiry)
     low_52_week, high_52_week = fifty_two_week_high_low(ticker)
 
     keys = ['LB', 'SC', 'SB', 'LL']
@@ -245,24 +248,41 @@ for symbol in share_list:
             ((itm_ce_count['SC'] + itm_ce_count['LB']) >= 5) and ((otm_ce_count['LB'] + otm_ce_count['SC']) >= 5)
                     )):
         trend = 'BULLISH'
-    elif(
+        atm_ind = output_ce['strikePrice'].tolist().index(atm)
+        otm_ce = output_ce['strikePrice'].tolist()[atm_ind + 2]
+        action = 'BULL CALL SPREAD'
+        buy = 'ATM CALL @ ' + str(atm)
+        short = 'OTM CALL @ ' + str(otm_ce)
+    elif (
                 (
                         ((itm_ce_count['SB'] + itm_ce_count['LL']) > 5) and ((otm_ce_count['LL'] + otm_ce_count['SB']) > 5)
                 ) and (
                         ((itm_pe_count['SC'] + itm_pe_count['LB']) >= 5) and ((otm_pe_count['LB'] + otm_pe_count['SC']) >= 5)
                     )):
         trend = 'BEARISH'
-    elif otm_ce_count['SB'] >= 5 and otm_pe_count['SB'] >= 5:
-        trend = 'SIDEWAYS'
+        action = 'BEAR PUT SPREAD'
+        atm_ind = output_pe['strikePrice'].tolist().index(atm)
+        otm_pe = output_pe['strikePrice'].tolist()[atm_ind - 2]
+        itm_pe = output_pe['strikePrice'].tolist()[atm_ind + 2]
+        buy = 'ITM PUT @ ' + str(itm_pe)
+        short = 'OTM PUT @ ' + str(otm_pe)
     else:
-        trend = 'NA'
-
-    current_symbol_data = pd.DataFrame({'Symbol': [symbol],
+        trend = 'SIDEWAYS'
+        action = 'SHORT STRANGLE'
+        atm_ind = output_pe['strikePrice'].tolist().index(atm)
+        otm_pe = output_pe['strikePrice'].tolist()[atm_ind - 2]
+        otm_ce = output_ce['strikePrice'].tolist()[atm_ind + 2]
+        buy = '-'
+        short = 'OTM PUT @ ' + str(otm_pe) + ' | OTM CALL @ ' + str(otm_ce)
+    current_symbol_data = pd.DataFrame({'52 week LOW': [low_52_week],
+                                        '52 week HIGH': [high_52_week],
                                         'Latest Expiry': [latest_expiry],
                                         'CMP': [stock_ltp],
-                                        '52 week LOW': [low_52_week],
-                                        '52 week HIGH': [high_52_week],
-                                        'Trend': [trend]
+                                        'Symbol': [symbol],
+                                        'Trend': [trend],
+                                        'Action': [action],
+                                        'Buy': [buy],
+                                        'Short': [short]
                                         })
     dashboard_df = pd.concat([dashboard_df, current_symbol_data], axis=0).reset_index(drop=True)
     dashboard_df = dashboard_df.style.apply(highlight_background, axis=1)
@@ -278,3 +298,4 @@ for symbol in share_list:
     dashboard.write(dashboard_df.to_html(escape=False), unsafe_allow_html=True)
     dashboard_df = dashboard_df.data
 dashboard_df.to_csv('dashboard.csv', mode='w', index=False, header=True)
+st.write()
