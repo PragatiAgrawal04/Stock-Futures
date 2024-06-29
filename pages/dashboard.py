@@ -77,6 +77,8 @@ def get_expiry_date_list(symb):
 
 
 def nifty_cash(date, symbol):
+    while date.weekday() == 5 or date.weekday() == 6:
+            date = date - datetime.timedelta(1)
     data = yf.download(symbol, start=date, end=date + datetime.timedelta(1), interval='1m')
     data = pd.DataFrame(data)
     data['Date'] = [i.date() for i in data.index]
