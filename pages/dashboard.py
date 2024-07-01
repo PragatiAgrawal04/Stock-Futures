@@ -205,14 +205,12 @@ def get_dataframe(ticker, exp_date_selected):
 
 
 def highlight_background(s):
-    if s.Trend == 'NA':
-        return ['background-color: white'] * len(s)
-    elif s.Trend == 'BULLISH':
-        return ['background-color: palegreen'] * len(s)
+    if s.Trend == 'BULLISH':
+        return ['background-color: white'] * 4 + ['background-color: palegreen'] * 5
     elif s.Trend == 'BEARISH':
-        return ['background-color: lightcoral'] * len(s)
+        return ['background-color: white'] * 4 + ['background-color: lightcoral'] * 5
     elif s.Trend == 'SIDEWAYS':
-        return ['background-color: cornflowerblue'] * len(s)
+        return ['background-color: white'] * 4 + ['background-color: cornflowerblue'] * 5
 #######################################################################################################################
 st.markdown("## OC Top 20 Trend Dashboard")
 st.markdown('<h4 style="color: black;font-size: 20px;">TIME:  ' +
