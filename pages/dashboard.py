@@ -295,6 +295,7 @@ for symbol in share_list:
                     {text-align: center;}
                     </style>""", unsafe_allow_html=True)
     dashboard_df.columns = ['<div class="col_heading">' + col + '</div>' for col in dashboard_df.columns]
+    dashboard_df["Symbol"] = ['<div class="col_heading">' + col + '</div>' for col in dashboard_df.["Symbol"]]
     dashboard.write(dashboard_df.to_html(escape=False), unsafe_allow_html=True)
     dashboard_df = dashboard_df.data
 dashboard_df.to_csv('dashboard.csv', mode='w', index=False, header=True)
