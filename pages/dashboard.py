@@ -285,17 +285,16 @@ for symbol in share_list:
                                         'Short': [short]
                                         })
     dashboard_df = pd.concat([dashboard_df, current_symbol_data], axis=0).reset_index(drop=True)
-    st.markdown("""<style>
-                    .col_heading
-                    {text-align: center;}
-                    </style>""", unsafe_allow_html=True)
-    dashboard_df.columns = ['<div class="col_heading">' + col + '</div>' for col in dashboard_df.columns]
-    dashboard_df["Symbol"] = ['<div class="col_heading">' + col + '</div>' for col in dashboard_df["Symbol"]]
     dashboard_df = dashboard_df.style.apply(highlight_background, axis=1)
     dashboard_df = dashboard_df.set_properties(
         **{'text-align': 'center'}).set_table_styles(
         [{'selector': 'th', 'props': [('text-align', 'center')]}])
     dashboard_df = dashboard_df.format({'52 week LOW': "{:.2f}".format, '52 week HIGH': "{:.2f}".format, 'CMP': "{:.2f}".format})
+    st.markdown("""<style>
+                    .col_heading
+                    {text-align: center;}
+                    </style>""", unsafe_allow_html=True)
+    dashboard_df.columns = ['<div class="col_heading">' + col + '</div>' for col in dashboard_df.columns]
     dashboard.write(dashboard_df.to_html(escape=False), unsafe_allow_html=True)
     dashboard_df = dashboard_df.data
 dashboard_df.to_csv('dashboard.csv', mode='w', index=False, header=True)
